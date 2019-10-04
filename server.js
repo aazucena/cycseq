@@ -83,6 +83,11 @@ if(oscPort != null) {
 	localPort: oscPort
     });
     stderr.write("extramuros: listening for OSC on UDP port " + oscPort.toString()+"\n");
+
+    udp.on("message", function (oscMsg) {
+        console.log("An OSC message just arrived!", oscMsg);
+    });
+
 }
 
 wss.on('connection',function(ws) {
@@ -99,28 +104,28 @@ wss.on('connection',function(ws) {
     if(udp!=null) udp.addListener("message",udpListener);
     ws.on("message",function(m) {
 	var n = JSON.parse(m);
-	if(n.request == "eval") {
-	    if(n.password == password) {
+	if(n.request === "eval") {
+	    if(n.password === password) {
 		evaluateBuffer(n.bufferName);
 	    }
 	}
-	if(n.request == "evalJS") {
-	    if(n.password == password) {
+	if(n.request === "evalJS") {
+	    if(n.password === password) {
 		evaluateJavaScriptGlobally(n.code);
 	    }
 	}
-	if(n.request == "oscFromClient") {
-	    if(n.password == password) {
+	if(n.request === "oscFromClient") {
+	    if(n.password === password) {
 		forwardOscFromClient(n.address,n.args);
 	    }
 	}
-	if(n.request == "feedback") {
-	    if(n.password == password) {
+	if(n.request === "feedback") {
+	    if(n.password === password) {
 		forwardFeedbackFromClient(n.text);
 	    }
 	}
     });
-    ws.on("close",function(code,msg) {
+    ws.on("close",function() {
 	console.log("");
 	if(udp!=null)udp.removeListener("message",udpListener);
     });
@@ -130,7 +135,7 @@ if(udp!=null)udp.open();
 
 function evaluateBuffer(name) {
   sharejs.client.open(name,'text','http://127.0.0.1:' + wsPort + '/channel', function (err,doc) {
-    var t = doc.getText();
+    var t = doc.getText().replace(/--.*\n/g, "").replace(/\r?\n|\r/g, "");
     var n = { type: 'eval', code: t };
     try { wss.broadcast(JSON.stringify(n)); }
     catch (e) { stderr.write("warning: exception in WebSocket broadcast\n"); }
@@ -157,9 +162,8 @@ function forwardFeedbackFromClient(text) {
     catch(e) { stderr.write("warning: exception in WebSocket broadcast\n"); }
 }
 
-var shareserver = sharejs.server.attach(expressServer, options);
 
-expressServer.get('/?', function(req, res, next) {
+expressServer.get('/?', function(req, res) {
   res.writeHead(302, {location: '/index.html'});
   res.end();
 });

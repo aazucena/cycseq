@@ -17,10 +17,10 @@ function setup(nEditors) {
     };
     ws.onmessage = function (m) {
 	var data = JSON.parse(m.data);
-	if(data.type == 'osc') {
+	if(data.type === 'osc') {
 	    var address = data.address.substring(1);
 	    // Tidal-specific double-mappings for incoming /play messages
-	    if(address == "play") {
+	    if(address === "play") {
 		data.args.name = data.args[1];
 		data.args.begin = data.args[3];
 		data.args.end = data.args[4];
@@ -33,10 +33,10 @@ function setup(nEditors) {
 	    eval( address + "(data.args)");
 	    // ummm... we should check to make sure the function exists first!...
 	}
-	if(data.type == 'js') {
+	if(data.type === 'js') {
 	    eval(data.code);
 	}
-	if(data.type == 'feedback') {
+	if(data.type === 'feedback') {
 	    var fb = $('#feedback');
 	    var oldText = fb.val();
 	    if(oldText.length > 10000) oldText = ""; // short-term solution...
@@ -52,7 +52,7 @@ function setup(nEditors) {
 
 function getPassword() {
     var x = document.getElementById('password').value;
-    if(x == null || x == "") {
+    if(x == null || x === "") {
 	alert("You must enter a password to evaluate code.");
 	return null;
     }
@@ -90,39 +90,37 @@ function openEditor(name) {
 
 function setupKeyboardHandlers() {
     $('textarea').keydown(function (event) {
-	if(event.which == 13 && event.shiftKey && event.ctrlKey) {
+	if(event.which === 13 && event.shiftKey && event.ctrlKey) {
 	    // ctrl+shift+enter: evaluate buffer as Javascript through server
 	    event.preventDefault();
-	    var code = $(this).val();
-	    evaluateJavaScriptGlobally(code);
+	    evaluateJavaScriptGlobally($(this).val());
 	}
-	else if(event.which == 13 && event.ctrlKey) {
+	else if(event.which === 13 && event.ctrlKey) {
 	    // ctrl+Enter: evaluate text as JavaScript in local browser
 	    event.preventDefault();
-	    var code = $(this).val();
-	    eval(code);
+	    eval($(this).val());
 	}
-	else if(event.which == 13 && event.shiftKey) {
+	else if(event.which === 13 && event.shiftKey) {
 	    // shift+Enter: evaluate buffer globally through the server
 	    event.preventDefault();
 	    evaluateBuffer(event.target.id);
 	}
-	else if(event.which == 67 && event.ctrlKey && event.shiftKey) {
+	else if(event.which === 67 && event.ctrlKey && event.shiftKey) {
 	    // ctrl+shift+c: global clear() on visuals
 	    event.preventDefault();
 	    evaluateJavaScriptGlobally("clear();");
 	}
-	else if(event.which == 82 && event.ctrlKey && event.shiftKey) {
+	else if(event.which === 82 && event.ctrlKey && event.shiftKey) {
 	    // ctrl+shift+r: global retick() on visuals
 	    event.preventDefault();
 	    evaluateJavaScriptGlobally("retick();");
 	}
-	else if(event.which == 67 && event.altKey) {
+	else if(event.which === 67 && event.altKey) {
 	    // alt+c: global clear() on visuals
 	    event.preventDefault();
 	    evaluateJavaScriptGlobally("clear();");
 	}
-	else if(event.which == 82 && event.altKey) {
+	else if(event.which === 82 && event.altKey) {
 	    // alt+r: global retick() on visuals
 	    event.preventDefault();
 	    evaluateJavaScriptGlobally("retick();");
@@ -159,3 +157,32 @@ function setupKeyboardHandlers() {
 //25// S "unit" (Just "rate"),
 //26// I "loop" (Just 1)
 // ]
+
+// Textarea usability
+
+// Tab adds \t and Tab + Shift removed \t at cursor position
+$(document).delegate('textarea', 'keydown', function(event) {
+    let keyCode = event.keyCode || event.which;
+	if (keyCode === 9) {
+		let start = this.selectionStart;
+		let end = this.selectionEnd;
+
+		let originalStart = $(this).val().substring(0, start);
+		let originalEnd = $(this).val().substring(end);
+
+		event.preventDefault();
+
+		if (event.shiftKey) {
+			let removeTab = originalStart.replace('\t', "");
+			$(this).val(removeTab + originalEnd);
+
+			if (originalStart !== removeTab) this.selectionStart = this.selectionEnd = start - 1;
+		} else {
+			// set textarea value to: text before caret + tab + text after caret
+			$(this).val(originalStart + "\t" + originalEnd);
+
+			// put caret at right position again
+        this.selectionStart = this.selectionEnd = start + 1;
+		}
+    }
+});
