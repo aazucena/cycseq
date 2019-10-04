@@ -173,7 +173,7 @@ $(document).delegate('textarea', 'keydown', function(event) {
 		event.preventDefault();
 
 		if (event.shiftKey) {
-			let removeTab = originalStart.replace('\t', "");
+			let removeTab = originalStart.replace(/\t$/, "");
 			$(this).val(removeTab + originalEnd);
 
 			if (originalStart !== removeTab) this.selectionStart = this.selectionEnd = start - 1;
