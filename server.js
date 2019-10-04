@@ -32,7 +32,7 @@ if(parsed['help']!=null) {
     stderr.write(" --help (-h)               this help message\n");
     stderr.write(" --password [word] (-p)    password to authenticate messages to server (required)\n");
     stderr.write(" --ws-port (-w) [number]   TCP port for WebSocket connections to browsers and clients (default: 8000)\n");
-    stderr.write(" --osc-port (-o) [number]  UDP port on which to receive OSC messages (default: none)\n");
+    stderr.write(" --oscSend-port (-o) [number]  UDP port on which to receive OSC messages (default: none)\n");
     process.exit(1);
 }
 
@@ -77,17 +77,17 @@ wss.broadcast = function(data) {
 };
 
 var udp;
+
 if(oscPort != null) {
     udp = new osc.UDPPort( {
-	localAddress: "0.0.0.0",
-	localPort: oscPort
+        localAddress: "0.0.0.0",
+        localPort: oscPort
     });
     stderr.write("extramuros: listening for OSC on UDP port " + oscPort.toString()+"\n");
 
     udp.on("message", function (oscMsg) {
         console.log("An OSC message just arrived!", oscMsg);
     });
-
 }
 
 wss.on('connection',function(ws) {
@@ -98,15 +98,23 @@ wss.on('connection',function(ws) {
 	    'address': m.address,
 	    'args': m.args
 	};
-	try { ws.send(JSON.stringify(n)); }
+	try {
+	    ws.send(JSON.stringify(n));
+	}
 	catch(e) { stderr.write("warning: exception in WebSocket send\n"); }
     };
     if(udp!=null) udp.addListener("message",udpListener);
     ws.on("message",function(m) {
-	var n = JSON.parse(m);
+    var n = JSON.parse(m);
+
+    if (n.request === "triggerOSC") {
+        try {wss.broadcast(JSON.stringify({'type': "osc", 'address': "/1/push" + n.bufferName.replace("edit", ""), 'arg': [1] }));}
+        catch(e) { stderr.write("warning: exception in WebSocket send\n"); }
+    }
+
 	if(n.request === "eval") {
 	    if(n.password === password) {
-		evaluateBuffer(n.bufferName);
+		    evaluateBuffer(n.bufferName);
 	    }
 	}
 	if(n.request === "evalJS") {
@@ -128,7 +136,7 @@ wss.on('connection',function(ws) {
     ws.on("close",function() {
 	console.log("");
 	if(udp!=null)udp.removeListener("message",udpListener);
-    });
+	});
 });
 
 if(udp!=null)udp.open();

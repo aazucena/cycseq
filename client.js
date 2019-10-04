@@ -35,7 +35,7 @@ var knownOpts = {
 var shortHands = {
     "s" : ["--server"],
     "n" : ["--newlines-as-spaces"],
-    "o" : ["--osc-port"],
+    "o" : ["--oscSend-port"],
     "w" : ["--ws-port"],
     "p" : ["--password"],
     "t" : ["--tidal"],
@@ -51,7 +51,7 @@ if(parsed['help']!=null) {
     stderr.write(" --help (-h)                 this help message\n");
     stderr.write(" --server (-s) [address]     address of server's downstream (default:localhost)\n");
     stderr.write(" --ws-port [number]          port for OSC WebSocket connection to server (default: 8000)\n");
-    stderr.write(" --osc-port [number]         UDP port on which to receive OSC messages (default: none)\n");
+    stderr.write(" --oscSend-port [number]         UDP port on which to receive OSC messages (default: none)\n");
     stderr.write(" --password [word] (-p)      password to authenticate messages to server\n");
     stderr.write(" --feedback (-f)             send feedback from stdin to server\n");
     stderr.write(" --tidal (-t)                launch Tidal (as installed by stack)\n");

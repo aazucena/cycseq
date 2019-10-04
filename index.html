@@ -3,15 +3,23 @@
 <head>
  <title>extramuros</title>
  <link rel="stylesheet" type="text/css" href="style.css">
-
+ <script src="jquery.min.js"></script>
+ <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+ <script src="browser.js"></script>
 </head>
 
 <body onload="setup(12)">
 <div id="global">
+ <div id="messageArea">
+  <p id="messageLabel">OSC Message:</p>
+  <pre id="message"></pre>
+ </div>
+
+ <button onclick="sayHello()">Send OSC message</button>
 <table>
 <tr>
 <td></td>
-<td>Password: <input type="password" name="password" length="32" id="password" class="text"/></td>
+<td>Password: <input type="password" name="password" length="32" id="password" class="text"/> </td>
 </tr>
 </table>
 
@@ -72,10 +80,7 @@
 <script src="/share/share.uncompressed.js"></script>
 <script src="/share/textarea.js"></script>
 <script src="/share/json.js"></script>
-<script src="jquery.min.js"></script>
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-<script src="browser.js"></script>
-<script src="visuals.js"></script>
+ <script src="visuals.js"></script>
 <script src="misc.js"></script>
 
 </body>

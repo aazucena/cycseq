@@ -1,8 +1,8 @@
 var ws;
 
 function Osc() {}
+
 jQuery.extend(Osc.prototype,jQuery.eventEmitter);
-var osc = new Osc();
 
 function setup(nEditors) {
     window.WebSocket = window.WebSocket || window.MozWebSocket;
@@ -16,39 +16,43 @@ function setup(nEditors) {
 	console.log("ERROR opening extramuros websocket connection");
     };
     ws.onmessage = function (m) {
-	var data = JSON.parse(m.data);
-	if(data.type === 'osc') {
-	    var address = data.address.substring(1);
-	    // Tidal-specific double-mappings for incoming /play messages
-	    if(address === "play") {
-		data.args.name = data.args[1];
-		data.args.begin = data.args[3];
-		data.args.end = data.args[4];
-		data.args.speed = data.args[5];
-		data.args.pan = data.args[6];
-		data.args.gain = data.args[14];
-		// full list of parameters at bottom
-	    }
-	    $(osc).trigger(address);
-	    eval( address + "(data.args)");
-	    // ummm... we should check to make sure the function exists first!...
-	}
-	if(data.type === 'js') {
-	    eval(data.code);
-	}
-	if(data.type === 'feedback') {
-	    var fb = $('#feedback');
-	    var oldText = fb.val();
-	    if(oldText.length > 10000) oldText = ""; // short-term solution...
-	    fb.val(oldText+data.text);
-	    fb.scrollTop(fb[0].scrollHeight);
-	}
+		var data = JSON.parse(m.data);
+		if(data.type === 'osc') {
+			var address = data.address.substring(1);
+			// Tidal-specific double-mappings for incoming /play messages
+			if(address === "play") {
+			data.args.name = data.args[1];
+			data.args.begin = data.args[3];
+			data.args.end = data.args[4];
+			data.args.speed = data.args[5];
+			data.args.pan = data.args[6];
+			data.args.gain = data.args[14];
+			// full list of parameters at bottom
+			}
+
+			if (address.startsWith("1/push")) {
+				evaluateBuffer("edit" + address.replace("1/push", ""));
+			} else {
+				$(osc).trigger(address);
+				eval( address + "(data.args)");
+			}
+			// ummm... we should check to make sure the function exists first!...
+		}
+		if(data.type === 'js') {
+			eval(data.code);
+		}
+		if(data.type === 'feedback') {
+			var fb = $('#feedback');
+			var oldText = fb.val();
+			if(oldText.length > 10000) oldText = ""; // short-term solution...
+			fb.val(oldText+data.text);
+			fb.scrollTop(fb[0].scrollHeight);
+		}
     };
     for(var x=1;x<=nEditors;x++) openEditor('edit' + x.toString());
     setupKeyboardHandlers();
     setupVisuals();
 }
-
 
 function getPassword() {
     var x = document.getElementById('password').value;
@@ -65,6 +69,14 @@ function evaluateBuffer(name) {
 		var msg = { request: "eval", bufferName: name, password: password };
 		ws.send(JSON.stringify(msg));
 		changeActiveChannel(name);
+	}
+}
+
+function triggerOSC(name) {
+	var password = getPassword();
+	if(password) {
+		var msg = {request: "triggerOSC", bufferName: name, password: password};
+		ws.send(JSON.stringify(msg));
 	}
 }
 
@@ -90,13 +102,15 @@ function evaluateJavaScriptGlobally(code) {
 function openEditor(name) {
     var elem = document.getElementById(name);
     if( elem != null) {
-	sharejs.open(name,'text',function(error,doc) {
-	    if(error) console.log(error);
-	    else {
-		elem.disabled = false;
-		doc.attach_textarea(elem);
-	    }
-	});
+		sharejs.open(name,'text',function(error,doc) {
+			if(error) console.log(error);
+			else {
+			elem.disabled = false;
+			doc.attach_textarea(elem);
+			}
+		});
+
+
     }
 }
 
@@ -115,7 +129,8 @@ function setupKeyboardHandlers() {
 	else if(event.which === 13 && event.shiftKey) {
 	    // shift+Enter: evaluate buffer globally through the server
 	    event.preventDefault();
-	    evaluateBuffer(event.target.id);
+	    triggerOSC(event.target.id);
+	    //evaluateBuffer(event.target.id);
 	}
 	else if(event.which === 67 && event.ctrlKey && event.shiftKey) {
 	    // ctrl+shift+c: global clear() on visuals
@@ -172,7 +187,6 @@ function setupKeyboardHandlers() {
 
 // Textarea usability
 
-// Tab adds \t and Tab + Shift removed \t at cursor position
 $(document).delegate('textarea', 'keydown', function(event) {
     let keyCode = event.keyCode || event.which;
 	if (keyCode === 9) {
