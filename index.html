@@ -3,39 +3,70 @@
 <head>
  <title>extramuros</title>
  <link rel="stylesheet" type="text/css" href="style.css">
+
 </head>
 
-<body onload="setup(3)">
+<body onload="setup(12)">
 <div id="global">
 <table>
-
 <tr>
 <td></td>
 <td>Password: <input type="password" name="password" length="32" id="password" class="text"/></td>
 </tr>
-
-<tr>
-<td><input type="button" value="eval" class="evalButton" onclick="evaluateBuffer('edit1');"/></td>
-<td><textarea spellcheck="false" id="edit1" rows="9" disabled>******</textarea></td>
-</tr>
-
-<tr>
-<td><input type="button" value="eval" class="evalButton" onclick="evaluateBuffer('edit2');"/></td>
-<td><textarea spellcheck="false" id="edit2" rows="9" disabled>******</textarea></td>
-</tr>
-
-<tr>
-<td><input type="button" value="eval" class="evalButton" onclick="evaluateBuffer('edit3');"/></td>
-<td><textarea spellcheck="false" id="edit3" rows="9" disabled>******</textarea></td>
-</tr>
-
-<!--
-<tr>
-<td colspan="2"><textarea id="feedback" rows="6" disabled style="width: 445px;"></textarea></td>
-</tr>
--->
-
 </table>
+
+ <hr/>
+
+ <div class="row">
+   <div class="label">Channel 1</div>
+   <div>
+    <textarea class="active" spellcheck="false" id="edit1" rows="9" disabled>******</textarea>
+   </div>
+   <div>
+    <textarea spellcheck="false" id="edit2" rows="9" disabled>******</textarea>
+   </div>
+   <div>
+    <textarea spellcheck="false" id="edit3" rows="9" disabled>******</textarea>
+   </div>
+ </div>
+ <hr/>
+
+ <div class="row">
+  <div class="label">Channel 2</div>
+  <div><textarea class="active" spellcheck="false" id="edit4" rows="9" disabled>******</textarea></div>
+  <div><textarea spellcheck="false" id="edit5" rows="9" disabled>******</textarea></div>
+  <div><textarea spellcheck="false" id="edit6" rows="9" disabled>******</textarea></div>
+
+ </div>
+ <hr/>
+
+ <div class="row">
+  <div class="label">Channel 3</div>
+  <div>
+   <div><textarea class="active" spellcheck="false" id="edit7" rows="9" disabled>******</textarea></div>
+   <div><textarea spellcheck="false" id="edit8" rows="9" disabled>******</textarea></div>
+   <div><textarea spellcheck="false" id="edit9" rows="9" disabled>******</textarea></div>
+  </div>
+ </div>
+ <hr/>
+
+ <div class="row">
+  <div class="label">Channel 4</div>
+  <div>
+   <div><textarea class="active" spellcheck="false" id="edit10" rows="9" disabled>******</textarea></div>
+   <div><textarea spellcheck="false" id="edit11" rows="9" disabled>******</textarea></div>
+   <div><textarea spellcheck="false" id="edit12" rows="9" disabled>******</textarea></div>
+  </div>
+ </div>
+ <hr/>
+
+ <!--
+ <tr>
+ <td colspan="2"><textarea id="feedback" rows="6" disabled style="width: 445px;"></textarea></td>
+ </tr>
+ -->
+
+
 
 <script src="/channel/bcsocket.js"></script>
 <script src="/share/share.uncompressed.js"></script>

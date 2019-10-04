@@ -62,16 +62,28 @@ function getPassword() {
 function evaluateBuffer(name) {
     var password = getPassword();
     if(password) {
-	var msg = { request: "eval", bufferName: name, password: password };
-	ws.send(JSON.stringify(msg));
-    }
+		var msg = { request: "eval", bufferName: name, password: password };
+		ws.send(JSON.stringify(msg));
+		changeActiveChannel(name);
+	}
+}
+
+// This is hardcoded to 3 channels for each line
+function changeActiveChannel(name) {
+	let startingLine = parseInt((name.replace("edit", "") - 1)/3) * 3 + 1;
+	for (let x = 0; x < 3; x++) {
+		$("#edit"+ (startingLine + x) ).removeClass("active");
+	}
+
+	$("#"+name ).addClass("active");
+
 }
 
 function evaluateJavaScriptGlobally(code) {
     var password = getPassword();
     if(password) {
-	var msg = { request: "evalJS", code: code, password: password };
-	ws.send(JSON.stringify(msg));
+		var msg = { request: "evalJS", code: code, password: password };
+		ws.send(JSON.stringify(msg));
     }
 }
 
@@ -173,7 +185,7 @@ $(document).delegate('textarea', 'keydown', function(event) {
 		event.preventDefault();
 
 		if (event.shiftKey) {
-			let removeTab = originalStart.replace(/\t$/, "");
+			let removeTab = originalStart.replace('/\t$/', "");
 			$(this).val(removeTab + originalEnd);
 
 			if (originalStart !== removeTab) this.selectionStart = this.selectionEnd = start - 1;
