@@ -108,7 +108,7 @@ wss.on('connection',function(ws) {
     var n = JSON.parse(m);
 
     if (n.request === "triggerOSC") {
-        try {wss.broadcast(JSON.stringify({'type': "osc", 'address': "/1/push" + n.bufferName.replace("edit", ""), 'arg': [1] }));}
+        try {wss.broadcast(JSON.stringify({'type': "osc", 'address': "/extramuros/editor/" + n.bufferName.replace("edit", ""), 'arg': [1] }));}
         catch(e) { stderr.write("warning: exception in WebSocket send\n"); }
     }
 

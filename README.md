@@ -90,3 +90,13 @@ All of this is rough, unfriendly and probably even mistaken in some cases. So le
 -d0kt0r0 (aka David Ogborn)
 
 PS: thanks to the following people for contributing to extramuros in various ways (additions, fixes, testing, championing, etc): Holger Ballweg, Alexandra Cárdenas, Ian Jarvis, Alex McLean, Ashley Sagar, Eldad Tsabary, Scott Wilson and anyone else who should be named here (submit a pull request...)
+
+##OSC editor control
+
+In this fork it is possible to switch between editors with OSC messages. In the index.html three editors are combined to one group and there are four different channel groups. 
+A list of possible OSC messages can be found in the following table.
+
+OSC address | Values | Description
+-------- | -------- | --------
+/extramuros/editor/{number}   | Integer value between 1 - 12   | Activates a single editor
+/extramuros/channels/position/{number}   | Integer value between 1 - 3xt   | Activates all editors of all channels to the given position 

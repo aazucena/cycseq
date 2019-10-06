@@ -30,8 +30,8 @@ function setup(nEditors) {
 			// full list of parameters at bottom
 			}
 
-			if (address.startsWith("1/push")) {
-				evaluateBuffer("edit" + address.replace("1/push", ""));
+			if (address.startsWith("extramuros/editor/")) {
+				evaluateBuffer("edit" + address.replace("extramuros/editor/", ""));
 			} else {
 				$(osc).trigger(address);
 				eval( address + "(data.args)");
