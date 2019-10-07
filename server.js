@@ -107,11 +107,10 @@ wss.on('connection',function(ws) {
     ws.on("message",function(m) {
     var n = JSON.parse(m);
 
-    if (n.request === "triggerOSC") {
+    if (n.request === "triggerEditorOSC") {
         try {wss.broadcast(JSON.stringify({'type': "osc", 'address': "/extramuros/editor/" + n.bufferName.replace("edit", ""), 'arg': [1] }));}
         catch(e) { stderr.write("warning: exception in WebSocket send\n"); }
     }
-
 	if(n.request === "eval") {
 	    if(n.password === password) {
 		    evaluateBuffer(n.bufferName);

@@ -2,6 +2,8 @@ var ws;
 
 function Osc() {}
 
+var osc = new Osc();
+
 jQuery.extend(Osc.prototype,jQuery.eventEmitter);
 
 function setup(nEditors) {
@@ -10,10 +12,10 @@ function setup(nEditors) {
     console.log("attempting websocket connection to " + url);
     ws = new WebSocket(url);
     ws.onopen = function () {
-	console.log("extramuros websocket connection opened");
+		console.log("extramuros websocket connection opened");
     };
     ws.onerror = function () {
-	console.log("ERROR opening extramuros websocket connection");
+		console.log("ERROR opening extramuros websocket connection");
     };
     ws.onmessage = function (m) {
 		var data = JSON.parse(m.data);
@@ -21,17 +23,20 @@ function setup(nEditors) {
 			var address = data.address.substring(1);
 			// Tidal-specific double-mappings for incoming /play messages
 			if(address === "play") {
-			data.args.name = data.args[1];
-			data.args.begin = data.args[3];
-			data.args.end = data.args[4];
-			data.args.speed = data.args[5];
-			data.args.pan = data.args[6];
-			data.args.gain = data.args[14];
-			// full list of parameters at bottom
+				data.args.name = data.args[1];
+				data.args.begin = data.args[3];
+				data.args.end = data.args[4];
+				data.args.speed = data.args[5];
+				data.args.pan = data.args[6];
+				data.args.gain = data.args[14];
+				// full list of parameters at bottom
 			}
 
 			if (address.startsWith("extramuros/editor/")) {
 				evaluateBuffer("edit" + address.replace("extramuros/editor/", ""));
+			}
+			else if (address.startsWith("extramuros/channels/position/")) {
+				triggerEvaluation(address.replace("extramuros/channels/position/", ""));
 			} else {
 				$(osc).trigger(address);
 				eval( address + "(data.args)");
@@ -63,6 +68,12 @@ function getPassword() {
     return x;
 }
 
+function triggerEvaluation(channel) {
+	for (let x = 0; x < 4; x++) {
+		evaluateBuffer("edit" + (parseInt(channel) + (x * 3)));
+	}
+}
+
 function evaluateBuffer(name) {
     var password = getPassword();
     if(password) {
@@ -72,10 +83,10 @@ function evaluateBuffer(name) {
 	}
 }
 
-function triggerOSC(name) {
+function triggerEditorOSC(name) {
 	var password = getPassword();
 	if(password) {
-		var msg = {request: "triggerOSC", bufferName: name, password: password};
+		var msg = {request: "triggerEditorOSC", bufferName: name, password: password};
 		ws.send(JSON.stringify(msg));
 	}
 }
@@ -105,53 +116,50 @@ function openEditor(name) {
 		sharejs.open(name,'text',function(error,doc) {
 			if(error) console.log(error);
 			else {
-			elem.disabled = false;
-			doc.attach_textarea(elem);
+				elem.disabled = false;
+				doc.attach_textarea(elem);
 			}
 		});
-
-
     }
 }
 
 function setupKeyboardHandlers() {
     $('textarea').keydown(function (event) {
-	if(event.which === 13 && event.shiftKey && event.ctrlKey) {
-	    // ctrl+shift+enter: evaluate buffer as Javascript through server
-	    event.preventDefault();
-	    evaluateJavaScriptGlobally($(this).val());
-	}
-	else if(event.which === 13 && event.ctrlKey) {
-	    // ctrl+Enter: evaluate text as JavaScript in local browser
-	    event.preventDefault();
-	    eval($(this).val());
-	}
-	else if(event.which === 13 && event.shiftKey) {
-	    // shift+Enter: evaluate buffer globally through the server
-	    event.preventDefault();
-	    triggerOSC(event.target.id);
-	    //evaluateBuffer(event.target.id);
-	}
-	else if(event.which === 67 && event.ctrlKey && event.shiftKey) {
-	    // ctrl+shift+c: global clear() on visuals
-	    event.preventDefault();
-	    evaluateJavaScriptGlobally("clear();");
-	}
-	else if(event.which === 82 && event.ctrlKey && event.shiftKey) {
-	    // ctrl+shift+r: global retick() on visuals
-	    event.preventDefault();
-	    evaluateJavaScriptGlobally("retick();");
-	}
-	else if(event.which === 67 && event.altKey) {
-	    // alt+c: global clear() on visuals
-	    event.preventDefault();
-	    evaluateJavaScriptGlobally("clear();");
-	}
-	else if(event.which === 82 && event.altKey) {
-	    // alt+r: global retick() on visuals
-	    event.preventDefault();
-	    evaluateJavaScriptGlobally("retick();");
-	}
+		if(event.which === 13 && event.shiftKey && event.ctrlKey) {
+			// ctrl+shift+enter: evaluate buffer as Javascript through server
+			event.preventDefault();
+			evaluateJavaScriptGlobally($(this).val());
+		}
+		else if(event.which === 13 && event.ctrlKey) {
+			// ctrl+Enter: evaluate text as JavaScript in local browser
+			event.preventDefault();
+			eval($(this).val());
+		}
+		else if(event.which === 13 && event.shiftKey) {
+			// shift+Enter: evaluate buffer globally through the server
+			event.preventDefault();
+			triggerEditorOSC(event.target.id);
+		}
+		else if(event.which === 67 && event.ctrlKey && event.shiftKey) {
+			// ctrl+shift+c: global clear() on visuals
+			event.preventDefault();
+			evaluateJavaScriptGlobally("clear();");
+		}
+		else if(event.which === 82 && event.ctrlKey && event.shiftKey) {
+			// ctrl+shift+r: global retick() on visuals
+			event.preventDefault();
+			evaluateJavaScriptGlobally("retick();");
+		}
+		else if(event.which === 67 && event.altKey) {
+			// alt+c: global clear() on visuals
+			event.preventDefault();
+			evaluateJavaScriptGlobally("clear();");
+		}
+		else if(event.which === 82 && event.altKey) {
+			// alt+r: global retick() on visuals
+			event.preventDefault();
+			evaluateJavaScriptGlobally("retick();");
+		}
     });
 }
 
@@ -178,7 +186,7 @@ function setupKeyboardHandlers() {
 //19// F "crush" (Just 0),
 //20// I "coarse" (Just 0),
 //21// F "hcutoff" (Just 0),
-//22// F "hresonance" (Just 0),
+//22// F "hresonance" (Just 0),textContent
 //23// F "bandf" (Just 0),
 //24// F "bandq" (Just 0),
 //25// S "unit" (Just "rate"),
@@ -186,7 +194,6 @@ function setupKeyboardHandlers() {
 // ]
 
 // Textarea usability
-
 $(document).delegate('textarea', 'keydown', function(event) {
     let keyCode = event.keyCode || event.which;
 	if (keyCode === 9) {
