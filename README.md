@@ -91,7 +91,7 @@ All of this is rough, unfriendly and probably even mistaken in some cases. So le
 
 PS: thanks to the following people for contributing to extramuros in various ways (additions, fixes, testing, championing, etc): Holger Ballweg, Alexandra Cárdenas, Ian Jarvis, Alex McLean, Ashley Sagar, Eldad Tsabary, Scott Wilson and anyone else who should be named here (submit a pull request...)
 
-##OSC editor control
+## OSC editor control
 
 In this fork it is possible to switch between editors with OSC messages. In the index.html three editors are combined to one group and there are four different channel groups. 
 A list of possible OSC messages can be found in the following table.
