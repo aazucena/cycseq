@@ -5,18 +5,19 @@
  <link rel="stylesheet" type="text/css" href="assets/css/style.css">
  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
  <script src="assets/js/browser.js"></script>
- <script src="assets/js/file.js"></script>
 </head>
 
 <body onload="setup(12)">
 <div id="global">
- <table>
-<tr>
-<td></td>
-<td>Password: <input type="password" name="password" length="32" id="password" class="text"/> </td>
-</tr>
-</table>
 
+  <div class="header">
+   <div class="float-left">Password: <input type="password" name="password" length="32" id="password" class="text"/></div>
+   <div class="float-right">
+    <input type="file" name="ins" id="files" class="text" value="Upload"/>
+    <input type="text" name="filename" length="32" id="filename" class="text" value="tidal"/>
+    <input type="button" name="ins" id="ins" class="text" onclick="save()" value="Save"/>
+   </div>
+  </div>
  <hr/>
 
  <div class="row">
@@ -69,7 +70,7 @@
  -->
 
 
-
+ <script src="assets/js/file.js"></script>
 <script src="/channel/bcsocket.js"></script>
 <script src="/share/share.uncompressed.js"></script>
 <script src="/share/textarea.js"></script>

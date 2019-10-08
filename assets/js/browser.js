@@ -114,6 +114,7 @@ function openEditor(name) {
     var elem = document.getElementById(name);
     if( elem != null) {
 		sharejs.open(name,'text',function(error,doc) {
+
 			if(error) console.log(error);
 			else {
 				elem.disabled = false;

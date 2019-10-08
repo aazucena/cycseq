@@ -34,8 +34,23 @@ div.row {
   margin-bottom: 16px;
   margin-top: 16px;
   padding-left: 20px;
-
 }
+
+div.header {
+  float: left;
+  width: 99%;
+  margin-bottom: 16px;
+  padding-left: 20px;
+}
+
+div.float-left {
+  float: left;
+}
+
+div.float-right {
+  float: right;
+}
+
 
 div.label {
   float: left;
