@@ -142,7 +142,8 @@ if(udp!=null)udp.open();
 
 function evaluateBuffer(name) {
   sharejs.client.open(name,'text','http://127.0.0.1:' + wsPort + '/channel', function (err,doc) {
-    var t = doc.getText().replace(/--.*\n/g, "").replace(/\r?\n|\r/g, "").replace(/\t/g, "");
+    //var t = doc.getText().replace(/--.*\n/g, "").replace(/\r?\n|\r/g, "").replace(/\t/g, "");
+    var t = doc.getText().replace(/--.*\n/g, "\n").replace(/\[\n/g, "[").replace(/\n\]/g, "]").replace(/\t/g, "");
     var n = { type: 'eval', code: t };
     try { wss.broadcast(JSON.stringify(n)); }
     catch (e) { stderr.write("warning: exception in WebSocket broadcast\n"); }
