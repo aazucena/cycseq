@@ -111,11 +111,17 @@ wss.on('connection',function(ws) {
         try {wss.broadcast(JSON.stringify({'type': "osc", 'address': "/extramuros/editor/" + n.bufferName.replace("edit", ""), 'arg': [1] }));}
         catch(e) { stderr.write("warning: exception in WebSocket send\n"); }
     }
+
 	if(n.request === "eval") {
 	    if(n.password === password) {
 		    evaluateBuffer(n.bufferName);
 	    }
 	}
+    if(n.request === "evalCode") {
+        if(n.password === password) {
+            evaluateCode(n.bufferName, n.code);
+        }
+    }
 	if(n.request === "evalJS") {
 	    if(n.password === password) {
 		evaluateJavaScriptGlobally(n.code);
@@ -139,6 +145,14 @@ wss.on('connection',function(ws) {
 });
 
 if(udp!=null)udp.open();
+
+function evaluateCode(name, code) {
+    var t = code.replace(/--.*\n/g, "\n").replace(/\[\n/g, "[").replace(/\n\]/g, "]").replace(/\t/g, "");
+    var n = { type: 'eval', code: t };
+    try { wss.broadcast(JSON.stringify(n)); }
+    catch (e) { stderr.write("warning: exception in WebSocket broadcast\n"); }
+    console.log(JSON.stringify(n));
+}
 
 function evaluateBuffer(name) {
   sharejs.client.open(name,'text','http://127.0.0.1:' + wsPort + '/channel', function (err,doc) {
