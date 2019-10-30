@@ -103,7 +103,7 @@ function evaluateCode (name, code) {
 function overdubOSC(extChannel, tidalChannel, sampleName, sampleBank ) {
 	var password = getPassword();
 	if(password) {
-		for (let x = 1; x < 2; x++) {
+		for (let x = 1; x < 4; x++) {
 			let currentid = "edit" + (parseInt((extChannel - 1) * 3) + x);
 			let samplePattern = "s \"" +  sampleName + ":" + sampleBank + "\" # legato 1,\n";
 			let currentValue = document.getElementById(currentid).value;
@@ -119,8 +119,19 @@ function overdubOSC(extChannel, tidalChannel, sampleName, sampleBank ) {
 
 			ins(currentid, currentValue);
 		}
-		evaluateCode("edit" + (parseInt((extChannel - 1) * 3) + 1),
-			document.getElementById("edit" + (parseInt((extChannel - 1) * 3) + 1)).value);
+		let activeChannelEditor = getActiveChannelEditor(extChannel);
+
+		evaluateCode(activeChannelEditor, document.getElementById(activeChannelEditor).value);
+	}
+}
+
+function getActiveChannelEditor(channel) {
+	for (let x = 1; x < 4 ; x++) {
+		let editorID = (parseInt((channel - 1) * 3) + x);
+
+		if ($("#edit" + editorID).hasClass("active")) {
+			return "edit" + editorID;
+		}
 	}
 }
 
