@@ -15,14 +15,16 @@ var stderr = process.stderr;
 var knownOpts = {
     "password" : [String, null],
     "ws-port" : [Number, null],
-    "osc-port" : [Number, null],
+    "osc-receive-port" : [Number, null],
+    "osc-send-port" : [Number, null],
     "help": Boolean
 };
 
 var shortHands = {
     "p" : ["--password"],
     "w" : ["--ws-port"],
-    "o" : ["--osc-port"]
+    "o" : ["--osc-receive-port"],
+    "s" : ["--osc-send-port"]
 };
 
 var parsed = nopt(knownOpts,shortHands,process.argv,2);
@@ -32,7 +34,8 @@ if(parsed['help']!=null) {
     stderr.write(" --help (-h)               this help message\n");
     stderr.write(" --password [word] (-p)    password to authenticate messages to server (required)\n");
     stderr.write(" --ws-port (-w) [number]   TCP port for WebSocket connections to browsers and clients (default: 8000)\n");
-    stderr.write(" --oscSend-port (-o) [number]  UDP port on which to receive OSC messages (default: none)\n");
+    stderr.write(" --osc-receive-port (-o) [number]  UDP port on which to receive OSC messages (default: none)\n");
+    stderr.write(" --osc-send-port (-s) [number]  UDP port on which to send OSC messages (default: none)\n");
     process.exit(1);
 }
 
@@ -42,7 +45,8 @@ if(process.argv.length<3) {
 
 var wsPort = parsed['ws-port'];
 if(wsPort==null) wsPort = 8000;
-var oscPort = parsed['osc-port'];
+var oscReceivePort = parsed['osc-receive-port'];
+var oscSendPort = parsed['osc-send-port'];
 var password = parsed['password'];
 if(password == null) {
     stderr.write("Error: --password option is not optional!\n");
@@ -78,17 +82,23 @@ wss.broadcast = function(data) {
 
 var udp;
 
-if(oscPort != null) {
+if(oscReceivePort != null) {
     udp = new osc.UDPPort( {
         localAddress: "0.0.0.0",
-        localPort: oscPort
+        localPort: oscReceivePort
     });
-    stderr.write("extramuros: listening for OSC on UDP port " + oscPort.toString()+"\n");
+    stderr.write("extramuros: listening for OSC on UDP port " + oscReceivePort.toString()+"\n");
 
     udp.on("message", function (oscMsg) {
         console.log("An OSC message just arrived!", oscMsg);
     });
+
+    if(oscSendPort != null) {
+        stderr.write("extramuros: send osc messages on UDP port " + oscSendPort.toString() + "\n");
+    }
 }
+
+
 
 wss.on('connection',function(ws) {
     // route incoming OSC back to browsers
@@ -114,11 +124,13 @@ wss.on('connection',function(ws) {
 
 	if(n.request === "eval") {
 	    if(n.password === password) {
-		    evaluateBuffer(n.bufferName);
+            sendOSCTriggerMessage(n.bufferName);
+            evaluateBuffer(n.bufferName);
 	    }
 	}
     if(n.request === "evalCode") {
         if(n.password === password) {
+            sendOSCTriggerMessage(n.bufferName);
             evaluateCode(n.bufferName, n.code);
         }
     }
@@ -152,6 +164,24 @@ function evaluateCode(name, code) {
     try { wss.broadcast(JSON.stringify(n)); }
     catch (e) { stderr.write("warning: exception in WebSocket broadcast\n"); }
     console.log(JSON.stringify(n));
+}
+
+function sendOSCTriggerMessage(name) {
+    if(oscSendPort != null) {
+        let msg = {
+            address: "/extramuros/editor/" + name.replace("edit", ""),
+            args: [
+                {
+                    type: "i",
+                    value: "1"
+                }
+            ]
+        };
+
+        udp.send(msg, "127.0.0.1", oscSendPort);
+
+        console.log("An OSC message just send!", msg);
+    }
 }
 
 function evaluateBuffer(name) {
