@@ -1,6 +1,6 @@
 function save() {
     let obj = {};
-    for (let x = 1; x <= 12; x++) {
+    for (let x = 1; x <= 9; x++) {
         obj["edit" + x] = document.getElementById("edit" + x).value
     }
     download(document.getElementById("filename").value, JSON.stringify(obj));

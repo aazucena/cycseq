@@ -42,6 +42,14 @@ function setup(nEditors) {
 					data.args[3],
 					data.args[5]
 				);
+			} else if (address.startsWith("extramuros/cat/channel/")) {
+				catOSC(
+					address.replace("extramuros/cat/channel/", ""),
+					data.args[1],
+					data.args[3],
+					data.args[5],
+					data.args[7]
+				);
 			}
 			else if (address.startsWith("extramuros/channels/position/")) {
 				triggerEvaluation(address.replace("extramuros/channels/position/", ""));
@@ -122,6 +130,33 @@ function overdubOSC(extChannel, tidalChannel, sampleName, sampleBank ) {
 		let activeChannelEditor = getActiveChannelEditor(extChannel);
 
 		evaluateCode(activeChannelEditor, document.getElementById(activeChannelEditor).value);
+	}
+}
+
+function catOSC(extChannel, tidalChannel, sampleName, sampleBank, executeCode ) {
+	var password = getPassword();
+	if(password) {
+		for (let x = 1; x < 4; x++) {
+			let currentid = "edit" + (parseInt((extChannel - 1) * 3) + x);
+			let samplePattern = "s \"" + sampleName + ":" + sampleBank + "\" # legato 1,\n";
+			let currentValue = document.getElementById(currentid).value;
+
+			if (currentValue.search(/cat/g) === -1) {
+				ins(currentid, tidalChannel + " $ cat [\n]\n");
+			}
+
+			currentValue = document.getElementById(currentid).value;
+			currentValue = currentValue.replace("]\n", "\t" + samplePattern + "]\n");
+			currentValue = currentValue.replace("legato 1\n", "legato 1,\n");
+			currentValue = currentValue.replace(",\n]", "\n]");
+
+			ins(currentid, currentValue);
+		}
+		let activeChannelEditor = getActiveChannelEditor(extChannel);
+
+		if (executeCode === 1) {
+			evaluateCode(activeChannelEditor, document.getElementById(activeChannelEditor).value);
+		}
 	}
 }
 
