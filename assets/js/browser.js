@@ -36,19 +36,22 @@ function setup(nEditors) {
 				evaluateBuffer("edit" + address.replace("extramuros/editor/", ""));
 			}
 			else if (address.startsWith("extramuros/overdub/channel/")) {
-				overdubOSC(
+				sampleOSC(
 					address.replace("extramuros/overdub/channel/", ""),
 					data.args[1],
 					data.args[3],
-					data.args[5]
+					data.args[5],
+					"1",
+					"overdub"
 				);
 			} else if (address.startsWith("extramuros/cat/channel/")) {
-				catOSC(
+				sampleOSC(
 					address.replace("extramuros/cat/channel/", ""),
 					data.args[1],
 					data.args[3],
 					data.args[5],
-					data.args[7]
+					data.args[7],
+					"cat"
 				);
 			}
 			else if (address.startsWith("extramuros/channels/position/")) {
@@ -108,49 +111,44 @@ function evaluateCode (name, code) {
 	}
 }
 
-function overdubOSC(extChannel, tidalChannel, sampleName, sampleBank ) {
+// d\d{1,2}\s*\$\s*cat\s\[(\n?\s*s\s+\"[a-z]+:\d{1,3}",?)*\n\s*\]
+// d1\s*\$\s*cat\s\[(\n?\s*s\s+\"[a-z]+:\d{1,3}".*,?)*\n\s*\]
+// Detect cat blocks
+
+/**
+ *
+ * @param extChannel - Extramuros channel (1..3)
+ * @param tidalChannel - TidalCycles channel (d1...d12)
+ * @param sampleName - Name of sample (mgit, dgit, bd)
+ * @param sampleBank -  Bank of sample (0..n i.e mgit:2)
+ * @param executeCode - Trigger code after change editor content (1|0)
+ */
+function sampleOSC(extChannel, tidalChannel, sampleName, sampleBank, executeCode, mode) {
 	var password = getPassword();
 	if(password) {
+		let searchString = new RegExp(tidalChannel + '\\s*\\$\\s*' + mode + '\\s\\[(\\n?\\s*s\\s+\\"[a-z]+:\\d{1,3}".*,?)*\\n?\\s*\\]', "gm");
+
 		for (let x = 1; x < 4; x++) {
 			let currentid = "edit" + (parseInt((extChannel - 1) * 3) + x);
-			let samplePattern = "s \"" +  sampleName + ":" + sampleBank + "\" # legato 1,\n";
+			let samplePattern = "s \"" + sampleName + ":" + sampleBank+"\"";
 			let currentValue = document.getElementById(currentid).value;
+			let searchResult = currentValue.search(searchString);
 
-			if (currentValue.search(/stack/g) === -1 ) {
-				ins(currentid, tidalChannel + " $ stack [\n]\n");
+			if (searchResult === -1) {
+				ins(currentid,
+					//(currentValue.length === 0 ? "" : "\n") +
+					tidalChannel + " $ " + mode + " [\n     "+samplePattern+"\n]");
+			} else {
+				let matchResult = currentValue.match(searchString);
+				if (matchResult.length > 0) {
+					let newResult = matchResult[0].replace("\n\]", ",\n\]");
+					newResult = newResult.replace("]", "     " + samplePattern + "\n]");
+					console.log(matchResult[0]);
+					console.log(newResult);
+					currentValue = currentValue.replace(matchResult[0], newResult);
+					ins(currentid, currentValue);
+				}
 			}
-
-			currentValue = document.getElementById(currentid).value;
-			currentValue = currentValue.replace("]\n", "\t"+samplePattern+"]\n");
-			currentValue = currentValue.replace("legato 1\n", "legato 1,\n");
-			currentValue = currentValue.replace(",\n]", "\n]");
-
-			ins(currentid, currentValue);
-		}
-		let activeChannelEditor = getActiveChannelEditor(extChannel);
-
-		evaluateCode(activeChannelEditor, document.getElementById(activeChannelEditor).value);
-	}
-}
-
-function catOSC(extChannel, tidalChannel, sampleName, sampleBank, executeCode ) {
-	var password = getPassword();
-	if(password) {
-		for (let x = 1; x < 4; x++) {
-			let currentid = "edit" + (parseInt((extChannel - 1) * 3) + x);
-			let samplePattern = "s \"" + sampleName + ":" + sampleBank + "\" # legato 1,\n";
-			let currentValue = document.getElementById(currentid).value;
-
-			if (currentValue.search(/cat/g) === -1) {
-				ins(currentid, tidalChannel + " $ cat [\n]\n");
-			}
-
-			currentValue = document.getElementById(currentid).value;
-			currentValue = currentValue.replace("]\n", "\t" + samplePattern + "]\n");
-			currentValue = currentValue.replace("legato 1\n", "legato 1,\n");
-			currentValue = currentValue.replace(",\n]", "\n]");
-
-			ins(currentid, currentValue);
 		}
 		let activeChannelEditor = getActiveChannelEditor(extChannel);
 
