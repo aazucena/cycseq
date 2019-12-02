@@ -41,6 +41,11 @@ function loadFile(evt) {
                 for (var key in p) {
                     if (p.hasOwnProperty(key)) {
                         ins(key, p[key]);
+
+                        let elem = document.getElementById(key);
+                        elem.textContent = p[key];
+                        Prism.highlightElement(elem);
+
                     }
                 }
             };
@@ -61,7 +66,7 @@ function ins(name, code) {
     var elem = document.getElementById(name);
     if( elem != null) {
         sharejs.open(name, 'text', function (error, doc) {
-            doc.del(0, elem.textLength);
+            doc.del(0, doc.snapshot.length);
             elem.value = "";
             doc.insert(0, code);
             elem.value = code;

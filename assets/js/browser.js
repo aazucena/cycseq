@@ -42,7 +42,7 @@ function setup(nEditors) {
 					data.args[3],
 					data.args[5],
 					"1",
-					"overdub"
+					"stack"
 				);
 			} else if (address.startsWith("extramuros/cat/channel/")) {
 				sampleOSC(
@@ -99,6 +99,7 @@ function evaluateBuffer(name) {
 		var msg = { request: "eval", bufferName: name, password: password };
 		ws.send(JSON.stringify(msg));
 		changeActiveChannel(name);
+		retriggerAnimation(name);
 	}
 }
 
@@ -131,29 +132,34 @@ function sampleOSC(extChannel, tidalChannel, sampleName, sampleBank, executeCode
 		for (let x = 1; x < 4; x++) {
 			let currentid = "edit" + (parseInt((extChannel - 1) * 3) + x);
 			let samplePattern = "s \"" + sampleName + ":" + sampleBank+"\"";
-			let currentValue = document.getElementById(currentid).value;
+			let currentValue = document.getElementById(currentid).textContent;
 			let searchResult = currentValue.search(searchString);
 
 			if (searchResult === -1) {
-				ins(currentid,
-					//(currentValue.length === 0 ? "" : "\n") +
-					tidalChannel + " $ " + mode + " [\n     "+samplePattern+"\n]");
+
+				let code =tidalChannel + " $ " + mode + " [\n     "+samplePattern+"\n]";
+				let elem = document.getElementById(currentid);
+				elem.textContent = code;
+				Prism.highlightElement(elem);
 			} else {
 				let matchResult = currentValue.match(searchString);
 				if (matchResult.length > 0) {
 					let newResult = matchResult[0].replace("\n\]", ",\n\]");
 					newResult = newResult.replace("]", "     " + samplePattern + "\n]");
-					console.log(matchResult[0]);
-					console.log(newResult);
+					console.log("Matchresult: " + matchResult[0]);
+					console.log("NewResult: " + newResult);
 					currentValue = currentValue.replace(matchResult[0], newResult);
-					ins(currentid, currentValue);
+
+					let elem = document.getElementById(currentid);
+					elem.textContent = currentValue;
+					Prism.highlightElement(elem);
 				}
 			}
 		}
 		let activeChannelEditor = getActiveChannelEditor(extChannel);
 
-		if (executeCode === 1) {
-			evaluateCode(activeChannelEditor, document.getElementById(activeChannelEditor).value);
+		if (executeCode === "1") {
+			evaluateCode(activeChannelEditor, document.getElementById(activeChannelEditor).textContent);
 		}
 	}
 }
@@ -180,10 +186,10 @@ function triggerEditorOSC(name) {
 function changeActiveChannel(name) {
 	let startingLine = parseInt((name.replace("edit", "") - 1)/3) * 3 + 1;
 	for (let x = 0; x < 3; x++) {
-		$("#edit"+ (startingLine + x) ).removeClass("active");
+		$("#edit"+ (startingLine + x) ).parent().removeClass("active");
 	}
 
-	$("#"+name ).addClass("active");
+	$("#"+name ).parent().addClass("active");
 
 }
 
@@ -210,7 +216,7 @@ function openEditor(name) {
 }
 
 function setupKeyboardHandlers() {
-    $('textarea').keydown(function (event) {
+    $('code').keydown(function (event) {
 		if(event.which === 13 && event.shiftKey && event.ctrlKey) {
 			// ctrl+shift+enter: evaluate buffer as Javascript through server
 			event.preventDefault();
@@ -223,8 +229,12 @@ function setupKeyboardHandlers() {
 		}
 		else if(event.which === 13 && event.shiftKey) {
 			// shift+Enter: evaluate buffer globally through the server
+
 			event.preventDefault();
-			triggerEditorOSC(event.target.id);
+
+			retriggerAnimation(event.currentTarget.id);
+			//triggerEditorOSC(event.target.id);
+			evaluateCode(event.target.id, event.target.textContent);
 		}
 		else if(event.which === 67 && event.ctrlKey && event.shiftKey) {
 			// ctrl+shift+c: global clear() on visuals
@@ -246,7 +256,18 @@ function setupKeyboardHandlers() {
 			event.preventDefault();
 			evaluateJavaScriptGlobally("retick();");
 		}
+
     });
+
+}
+
+function retriggerAnimation(id) {
+	let element = $('#' + id).parent();
+	element.addClass("backgroundAnimated");
+
+	element[0].style.animation = 'none';
+	element[0].offsetHeight; /* trigger reflow */
+	element[0].style.animation = null;
 }
 
 // path = "/play",
@@ -278,6 +299,16 @@ function setupKeyboardHandlers() {
 //25// S "unit" (Just "rate"),
 //26// I "loop" (Just 1)
 // ]
+
+$(document).delegate('code', 'input', function(event) {
+	let element = $('#'+this.id);
+	let position = element.caret('pos');
+	Prism.highlightElement(this);
+	element.caret('pos', position);
+
+	ins(this.id, this.textContent);
+});
+
 
 // Textarea usability
 $(document).delegate('textarea', 'keydown', function(event) {
