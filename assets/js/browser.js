@@ -62,6 +62,10 @@ function setup(nEditors) {
 			}
 			// ummm... we should check to make sure the function exists first!...
 		}
+		if (data.type === 'input') {
+			//openEditor(data.name);
+			//$("#" + data.name).caret('pos', data.position );
+		}
 		if(data.type === 'js') {
 			eval(data.code);
 		}
@@ -174,6 +178,14 @@ function getActiveChannelEditor(channel) {
 	}
 }
 
+function broadcastInput(name, position) {
+	var password = getPassword();
+	if(password) {
+		var msg = {request: "sendInput", bufferName: name, caret: position};
+		ws.send(JSON.stringify(msg));
+	}
+}
+
 function triggerEditorOSC(name) {
 	var password = getPassword();
 	if(password) {
@@ -201,15 +213,29 @@ function evaluateJavaScriptGlobally(code) {
     }
 }
 
-function openEditor(name) {
-    var elem = document.getElementById(name);
-    if( elem != null) {
-		sharejs.open(name,'text',function(error,doc) {
-
+function openExistingEditor(name) {
+	let elem = document.getElementById(name);
+	if( elem != null) {
+		sharejs.openExisting(name,'text',function(error,doc) {
 			if(error) console.log(error);
 			else {
+				elem.innerHTML = doc.snapshot;
 				elem.disabled = false;
-				doc.attach_textarea(elem);
+				Prism.highlightElement(elem);
+			}
+		});
+	}
+}
+
+function openEditor(name) {
+    let elem = document.getElementById(name);
+    if( elem != null) {
+		sharejs.open(name,'text',function(error,doc) {
+			if(error) console.log(error);
+			else {
+				elem.innerHTML = doc.snapshot;
+				elem.disabled = false;
+				Prism.highlightElement(elem);
 			}
 		});
     }
@@ -229,7 +255,6 @@ function setupKeyboardHandlers() {
 		}
 		else if(event.which === 13 && event.shiftKey) {
 			// shift+Enter: evaluate buffer globally through the server
-
 			event.preventDefault();
 
 			retriggerAnimation(event.currentTarget.id);
@@ -300,39 +325,26 @@ function retriggerAnimation(id) {
 //26// I "loop" (Just 1)
 // ]
 
-$(document).delegate('code', 'input', function(event) {
-	let element = $('#'+this.id);
-	let position = element.caret('pos');
-	Prism.highlightElement(this);
-	element.caret('pos', position);
+String.prototype.splice = function(idx, rem, str) {
+	return this.slice(0, idx) + str + this.slice(idx + Math.abs(rem));
+};
 
-	ins(this.id, this.textContent);
-});
-
-
-// Textarea usability
-$(document).delegate('textarea', 'keydown', function(event) {
-    let keyCode = event.keyCode || event.which;
-	if (keyCode === 9) {
-		let start = this.selectionStart;
-		let end = this.selectionEnd;
-
-		let originalStart = $(this).val().substring(0, start);
-		let originalEnd = $(this).val().substring(end);
-
-		event.preventDefault();
-
-		if (event.shiftKey) {
-			let removeTab = originalStart.replace('/\t$/', "");
-			$(this).val(removeTab + originalEnd);
-
-			if (originalStart !== removeTab) this.selectionStart = this.selectionEnd = start - 1;
-		} else {
-			// set textarea value to: text before caret + tab + text after caret
-			$(this).val(originalStart + "\t" + originalEnd);
-
-			// put caret at right position again
-        this.selectionStart = this.selectionEnd = start + 1;
+$("code").on({
+	input: function() {
+		let element = $('#'+this.id);
+		let position = element.caret('pos');
+		Prism.highlightElement(this);
+		element.caret('pos', position );
+		ins(this.id, this.textContent + '\n');
+		broadcastInput(this.id, position);
+	},
+	keydown: function(event) {
+		if (event.which === 13 && !event.shiftKey) {
+			let element = $('#'+this.id);
+			let position = element.caret('pos');
+			element.html(element.text().splice(position,  0, "\n"));
+			element.caret('pos', position + 1);
+			broadcastInput(this.id, position);
 		}
-    }
+	}
 });
