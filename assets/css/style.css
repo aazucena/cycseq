@@ -21,6 +21,10 @@ pre {
   background: #2B2B2B !important;
 }
 
+code {
+  min-width: 200px;
+}
+
 @-o-keyframes fadeIt {
   0%   { background-color: #2b2b2b; }
   50%  { background-color: #515151; }
