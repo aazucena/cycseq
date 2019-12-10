@@ -164,6 +164,7 @@ function sampleOSC(extChannel, tidalChannel, sampleName, sampleBank, executeCode
 
 		if (executeCode === "1") {
 			evaluateCode(activeChannelEditor, document.getElementById(activeChannelEditor).textContent);
+			ins(activeChannelEditor, document.getElementById(activeChannelEditor).textContent + '\n');
 		}
 	}
 }
@@ -172,7 +173,7 @@ function getActiveChannelEditor(channel) {
 	for (let x = 1; x < 4 ; x++) {
 		let editorID = (parseInt((channel - 1) * 3) + x);
 
-		if ($("#edit" + editorID).hasClass("active")) {
+		if ($("#edit" + editorID).parent().hasClass("active")) {
 			return "edit" + editorID;
 		}
 	}
