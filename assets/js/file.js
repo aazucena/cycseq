@@ -46,6 +46,13 @@ function loadFile(evt) {
                         elem.textContent = p[key];
                         Prism.highlightElement(elem);
 
+                        let proxy = document.getElementById("proxy" + key.replace("edit", ""));
+
+                        if( proxy != null) {
+                            proxy.innerHTML = p[key];
+                            Prism.highlightElement(proxy);
+                        }
+
                     }
                 }
             };

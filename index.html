@@ -5,6 +5,7 @@
  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
  <link href="assets/css/prism.css" rel="stylesheet" type="text/css" />
  <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+ <link rel="stylesheet" type="text/css" href="assets/css/mLayout.css">
  <script src="assets/js/caret.js" type="text/javascript"></script>
  <script src="assets/js/prism.js" type="text/javascript"></script>
 
@@ -18,76 +19,69 @@
         'remove-indent': true,
         'left-trim': false,
         'right-trim': false,
-        //'break-lines': 10,
-        /*'indent': 1,
-        'remove-initial-line-feed': false,
-        'tabs-to-spaces': 1,
-        'spaces-to-tabs': 1*/
-
     });
 </script>
 <div id="global">
 
   <div class="header">
-   <div class="float-left">Password: <input type="password" name="password" length="32" id="password" class="text"/></div>
-   <div class="float-right">
-    <input type="file" name="ins" id="files" class="text" value="Upload"/>
-    <input type="text" name="filename" length="32" id="filename" class="text" value="tidal"/>
-    <input type="button" name="ins" id="ins" class="text" onclick="save()" value="Save"/>
-   </div>
+      <div class="float-left">
+          <a tabindex="1" href="single.html"><img class="icon-btns" src="assets/img/gsingle.png" /></a>
+          <a tabindex="2" href="hlayout.html"><img class="icon-btns" src="assets/img/ghlayout.png" /></a>
+          <!--<a tabindex="3" href="vlayout.html"><img class="icon-btns" src="assets/img/gvlayout.png" /></a>-->
+          <a tabindex="4" href="./index.html"><img class="icon-btns" src="assets/img/gmlayout.png" /></a>
+      </div>
+      <div class="float-right">
+           <input type="file" name="ins" id="files" class="text" value="Upload"/>
+        <input type="text" name="filename" length="32" id="filename" class="text" value="tidal"/>
+        <input type="button" name="ins" id="ins" class="text" onclick="save()" value="Save"/>
+      </div>
   </div>
  <hr/>
 
     <div class="row">
-        <div class="label">Ch 1</div>
         <pre>
-            <code id="edit1" spellcheck="false" contenteditable="true" class="language-tidal">
+            <code tabindex="5" id="edit1" spellcheck="false" contenteditable="true" class="language-tidal">
             </code>
         </pre>
         <pre>
-            <code id="edit2" spellcheck="false" contenteditable="true" class="language-tidal">
+            <code tabindex="6" id="edit2" spellcheck="false" contenteditable="true" class="language-tidal">
             </code>
         </pre>
         <pre>
-            <code id="edit3" spellcheck="false" contenteditable="true" class="language-tidal">
+            <code tabindex="7" id="edit3" spellcheck="false" contenteditable="true" class="language-tidal">
             </code>
         </pre>
     </div>
- <hr/>
 
     <div class="row">
-        <div class="label">Ch 2</div>
         <pre>
-            <code id="edit4" spellcheck="false" contenteditable="true" class="language-tidal">
+            <code tabindex="8" id="edit4" spellcheck="false" contenteditable="true" class="language-tidal">
             </code>
         </pre>
         <pre>
-            <code id="edit5" spellcheck="false" contenteditable="true" class="language-tidal">
+            <code tabindex="9" id="edit5" spellcheck="false" contenteditable="true" class="language-tidal">
             </code>
         </pre>
         <pre>
-            <code id="edit6" spellcheck="false" contenteditable="true" class="language-tidal">
+            <code tabindex="10" id="edit6" spellcheck="false" contenteditable="true" class="language-tidal">
             </code>
         </pre>
     </div>
- <hr/>
 
     <div class="row">
-        <div class="label">Ch 3</div>
         <pre>
-            <code id="edit7" spellcheck="false" contenteditable="true" class="language-tidal">
+            <code tabindex="11" id="edit7" spellcheck="false" contenteditable="true" class="language-tidal">
             </code>
         </pre>
         <pre>
-            <code id="edit8" spellcheck="false" contenteditable="true" class="language-tidal">
+            <code tabindex="12" id="edit8" spellcheck="false" contenteditable="true" class="language-tidal">
             </code>
         </pre>
         <pre>
-            <code id="edit9" spellcheck="false" contenteditable="true" class="language-tidal">
+            <code tabindex="13" id="edit9" spellcheck="false" contenteditable="true" class="language-tidal">
             </code>
         </pre>
     </div>
- <hr/>
 
  <!--
  <div class="row">
@@ -105,7 +99,7 @@
  <td colspan="2"><textarea id="feedback" rows="6" disabled style="width: 445px;"></textarea></td>
  </tr>
  -->
-
+</div>
 
  <script src="assets/js/file.js"></script>
  <script src="assets/js/browser.js"></script>

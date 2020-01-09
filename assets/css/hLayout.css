@@ -1,0 +1,54 @@
+div.row {
+    float: left;
+    width: 100%;
+    height: 90%;
+}
+
+pre.editor {
+    width: 33.17%;
+    float: left;
+}
+
+.proxy-column {
+    float: left;
+}
+
+.proxy {
+    height: 76px;
+    overflow: hidden;
+    cursor: pointer;
+    min-width: 32.6%;
+    width: 30% !important;
+}
+
+
+.proxy-group.active {
+    border: 1px solid #ffc800;
+    -webkit-appearance: none;
+}
+
+.proxy > code {
+    font-size: 9px;
+}
+
+code[class*="language-"], pre[class*="language-"] {
+    height: 100%;
+}
+
+.visible {
+    visibility: visible;
+}
+
+.hidden {
+    display: none;
+}
+
+.proxy-group {
+    height: 228px;
+    padding-bottom: 2px;
+}
+
+.cw-20 {
+    width: 19.5% !important;
+    padding-left: 0.5%;
+}

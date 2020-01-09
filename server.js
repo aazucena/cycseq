@@ -76,7 +76,7 @@ var options = {
 
 var wss = new WebSocket.Server({server: httpServer});
 wss.broadcast = function(data) {
-  stderr.write("extramuros: broadcast to " + wss.clients.size + " clients\n");
+  //stderr.write("extramuros: broadcast to " + wss.clients.size + " clients\n");
   for (let i of wss.clients) i.send(data);
 };
 
@@ -98,21 +98,20 @@ if(oscReceivePort != null) {
     }
 }
 
-
-
 wss.on('connection',function(ws) {
     // route incoming OSC back to browsers
     var udpListener = function(m) {
-	var n = {
-	    'type': 'osc',
-	    'address': m.address,
-	    'args': m.args
-	};
-	try {
-	    ws.send(JSON.stringify(n));
-	}
-	catch(e) { stderr.write("warning: exception in WebSocket send\n"); }
+        var n = {
+            'type': 'osc',
+            'address': m.address,
+            'args': m.args
+        };
+        try {
+            ws.send(JSON.stringify(n));
+        }
+        catch(e) { stderr.write("warning: exception in WebSocket send\n"); }
     };
+
     if(udp!=null) udp.addListener("message",udpListener);
     ws.on("message",function(m) {
     var n = JSON.parse(m);
@@ -126,31 +125,21 @@ wss.on('connection',function(ws) {
         catch(e) { stderr.write("warning: exception in WebSocket send\n"); }
     }
 	if(n.request === "eval") {
-	    if(n.password === password) {
-            sendOSCTriggerMessage(n.bufferName);
-            evaluateBuffer(n.bufferName);
-	    }
+        sendOSCTriggerMessage(n.bufferName);
+        evaluateBuffer(n.bufferName);
 	}
     if(n.request === "evalCode") {
-        if(n.password === password) {
-            sendOSCTriggerMessage(n.bufferName);
-            evaluateCode(n.bufferName, n.code);
-        }
+        sendOSCTriggerMessage(n.bufferName);
+        evaluateCode(n.bufferName, n.code);
     }
 	if(n.request === "evalJS") {
-	    if(n.password === password) {
-		evaluateJavaScriptGlobally(n.code);
-	    }
+        evaluateJavaScriptGlobally(n.code);
 	}
 	if(n.request === "oscFromClient") {
-	    if(n.password === password) {
 		forwardOscFromClient(n.address,n.args);
-	    }
 	}
 	if(n.request === "feedback") {
-	    if(n.password === password) {
 		forwardFeedbackFromClient(n.text);
-	    }
 	}
     });
     ws.on("close",function() {

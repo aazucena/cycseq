@@ -54,6 +54,9 @@ function setup(nEditors) {
 					"cat"
 				);
 			}
+			else if (address.startsWith("extramuros/notes")) {
+				addNotes(data.args[1]);
+			}
 			else if (address.startsWith("extramuros/channels/position/")) {
 				triggerEvaluation(address.replace("extramuros/channels/position/", ""));
 			} else {
@@ -63,8 +66,13 @@ function setup(nEditors) {
 			// ummm... we should check to make sure the function exists first!...
 		}
 		if (data.type === 'input') {
-			//openEditor(data.name);
-			//$("#" + data.name).caret('pos', data.position );
+			for(var x=1;x<=nEditors;x++) {
+				openExistingDocument(
+					document.getElementById('proxy' + x.toString()),
+					'edit' + x.toString(),
+					'proxy' + x.toString()
+				);
+			}
 		}
 		if(data.type === 'js') {
 			eval(data.code);
@@ -77,18 +85,17 @@ function setup(nEditors) {
 			fb.scrollTop(fb[0].scrollHeight);
 		}
     };
-    for(var x=1;x<=nEditors;x++) openEditor('edit' + x.toString());
+    for(var x=1;x<=nEditors;x++) {
+    	openEditor(x.toString());
+	}
+
     setupKeyboardHandlers();
     setupVisuals();
 }
 
-function getPassword() {
-    var x = document.getElementById('password').value;
-    if(x == null || x === "") {
-	alert("You must enter a password to evaluate code.");
-	return null;
-    }
-    return x;
+function addNotes(notes) {
+	let elem = $(document.activeElement);
+	inputEditor(elem[0], notes);
 }
 
 function triggerEvaluation(channel) {
@@ -98,22 +105,16 @@ function triggerEvaluation(channel) {
 }
 
 function evaluateBuffer(name) {
-    var password = getPassword();
-    if(password) {
-		var msg = { request: "eval", bufferName: name, password: password };
-		ws.send(JSON.stringify(msg));
-		changeActiveChannel(name);
-		retriggerAnimation(name);
-	}
+	var msg = { request: "eval", bufferName: name };
+	ws.send(JSON.stringify(msg));
+	changeActiveChannel(name);
+	retriggerAnimation(name);
 }
 
 function evaluateCode (name, code) {
-	var password = getPassword();
-	if(password) {
-		var msg = { request: "evalCode", bufferName: name, code: code, password: password };
-		ws.send(JSON.stringify(msg));
-		changeActiveChannel(name);
-	}
+	var msg = { request: "evalCode", bufferName: name, code: code };
+	ws.send(JSON.stringify(msg));
+	changeActiveChannel(name);
 }
 
 // d\d{1,2}\s*\$\s*cat\s\[(\n?\s*s\s+\"[a-z]+:\d{1,3}",?)*\n\s*\]
@@ -129,44 +130,42 @@ function evaluateCode (name, code) {
  * @param executeCode - Trigger code after change editor content (1|0)
  */
 function sampleOSC(extChannel, tidalChannel, sampleName, sampleBank, executeCode, mode) {
-	var password = getPassword();
-	if(password) {
-		let searchString = new RegExp(tidalChannel + '\\s*\\$\\s*' + mode + '\\s\\[(\\n?\\s*s\\s+\\"[a-z]+:\\d{1,3}".*,?)*\\n?\\s*\\]', "gm");
+	let searchString = new RegExp(tidalChannel + '\\s*\\$\\s*' + mode + '\\s\\[(\\n?\\s*s\\s+\\"[a-z]+:\\d{1,3}".*,?)*\\n?\\s*\\]', "gm");
 
-		for (let x = 1; x < 4; x++) {
-			let currentid = "edit" + (parseInt((extChannel - 1) * 3) + x);
-			let samplePattern = "s \"" + sampleName + ":" + sampleBank+"\"";
-			let currentValue = document.getElementById(currentid).textContent;
-			let searchResult = currentValue.search(searchString);
+	for (let x = 1; x < 4; x++) {
+		let currentid = "edit" + (parseInt((extChannel - 1) * 3) + x);
+		let samplePattern = "s \"" + sampleName + ":" + sampleBank+"\"";
+		let currentValue = document.getElementById(currentid).textContent;
+		let searchResult = currentValue.search(searchString);
 
-			if (searchResult === -1) {
+		if (searchResult === -1) {
 
-				let code =tidalChannel + " $ " + mode + " [\n     "+samplePattern+"\n]";
+			let code =tidalChannel + " $ " + mode + " [\n     "+samplePattern+"\n]";
+			let elem = document.getElementById(currentid);
+			elem.textContent = code;
+			Prism.highlightElement(elem);
+		} else {
+			let matchResult = currentValue.match(searchString);
+			if (matchResult.length > 0) {
+				let newResult = matchResult[0].replace("\n\]", ",\n\]");
+				newResult = newResult.replace("]", "     " + samplePattern + "\n]");
+				console.log("Matchresult: " + matchResult[0]);
+				console.log("NewResult: " + newResult);
+				currentValue = currentValue.replace(matchResult[0], newResult);
+
 				let elem = document.getElementById(currentid);
-				elem.textContent = code;
+				elem.textContent = currentValue;
 				Prism.highlightElement(elem);
-			} else {
-				let matchResult = currentValue.match(searchString);
-				if (matchResult.length > 0) {
-					let newResult = matchResult[0].replace("\n\]", ",\n\]");
-					newResult = newResult.replace("]", "     " + samplePattern + "\n]");
-					console.log("Matchresult: " + matchResult[0]);
-					console.log("NewResult: " + newResult);
-					currentValue = currentValue.replace(matchResult[0], newResult);
-
-					let elem = document.getElementById(currentid);
-					elem.textContent = currentValue;
-					Prism.highlightElement(elem);
-				}
 			}
 		}
-		let activeChannelEditor = getActiveChannelEditor(extChannel);
-
-		if (executeCode === "1") {
-			evaluateCode(activeChannelEditor, document.getElementById(activeChannelEditor).textContent);
-			ins(activeChannelEditor, document.getElementById(activeChannelEditor).textContent + '\n');
-		}
 	}
+	let activeChannelEditor = getActiveChannelEditor(extChannel);
+
+	if (executeCode === "1") {
+		evaluateCode(activeChannelEditor, document.getElementById(activeChannelEditor).textContent);
+		ins(activeChannelEditor, document.getElementById(activeChannelEditor).textContent + '\n');
+	}
+
 }
 
 function getActiveChannelEditor(channel) {
@@ -180,19 +179,13 @@ function getActiveChannelEditor(channel) {
 }
 
 function broadcastInput(name, position) {
-	var password = getPassword();
-	if(password) {
-		var msg = {request: "sendInput", bufferName: name, caret: position};
-		ws.send(JSON.stringify(msg));
-	}
+	let msg = {request: "sendInput", bufferName: name, caret: position};
+	ws.send(JSON.stringify(msg));
 }
 
 function triggerEditorOSC(name) {
-	var password = getPassword();
-	if(password) {
-		var msg = {request: "triggerEditorOSC", bufferName: name, password: password};
-		ws.send(JSON.stringify(msg));
-	}
+	let msg = {request: "triggerEditorOSC", bufferName: name};
+	ws.send(JSON.stringify(msg));
 }
 
 // This is hardcoded to 3 channels for each line
@@ -207,19 +200,22 @@ function changeActiveChannel(name) {
 }
 
 function evaluateJavaScriptGlobally(code) {
-    var password = getPassword();
-    if(password) {
-		var msg = { request: "evalJS", code: code, password: password };
-		ws.send(JSON.stringify(msg));
-    }
+	var msg = { request: "evalJS", code: code };
+	ws.send(JSON.stringify(msg));
 }
 
 function openExistingEditor(name) {
-	let elem = document.getElementById(name);
+	let elem = $(".language-tidal").children()[0];
+	openExistingDocument(elem, name, elem.id);
+}
+
+function openExistingDocument(elem, name, id) {
+	//let elem = $(".language-tidal").children()[0];
 	if( elem != null) {
-		sharejs.openExisting(name,'text',function(error,doc) {
+		sharejs.open(name,'text',function(error,doc) {
 			if(error) console.log(error);
 			else {
+				elem.id = id;
 				elem.innerHTML = doc.snapshot;
 				elem.disabled = false;
 				Prism.highlightElement(elem);
@@ -228,18 +224,26 @@ function openExistingEditor(name) {
 	}
 }
 
-function openEditor(name) {
+function openEditor(number) {
+	let name = "edit" + number;
+
     let elem = document.getElementById(name);
-    if( elem != null) {
-		sharejs.open(name,'text',function(error,doc) {
-			if(error) console.log(error);
-			else {
+    let proxy = document.getElementById("proxy" + number);
+
+	sharejs.open(name,'text',function(error,doc) {
+		if(error) console.log(error);
+		else {
+			if( elem != null) {
 				elem.innerHTML = doc.snapshot;
 				elem.disabled = false;
 				Prism.highlightElement(elem);
 			}
-		});
-    }
+			if( proxy != null) {
+				proxy.innerHTML = doc.snapshot;
+				Prism.highlightElement(proxy);
+			}
+		}
+	});
 }
 
 function setupKeyboardHandlers() {
@@ -330,22 +334,40 @@ String.prototype.splice = function(idx, rem, str) {
 	return this.slice(0, idx) + str + this.slice(idx + Math.abs(rem));
 };
 
+function inputEditor(elem, content) {
+	let element = $('#'+elem.id);
+	let position = element.caret('pos');
+
+	if (content !== undefined) {
+		let elemText =  elem.textContent;
+		elem.textContent = elemText.substr(0, position) + content + " " + elemText.substr(position);
+		position += content.length + 1;
+	}
+
+	Prism.highlightElement(elem);
+	element.caret('pos', position );
+	ins(elem.id, elem.textContent + '\n');
+	broadcastInput(elem.id, position);
+}
+
 $("code").on({
 	input: function() {
-		let element = $('#'+this.id);
+		inputEditor(this);
+		/*let element = $('#'+this.id);
 		let position = element.caret('pos');
 		Prism.highlightElement(this);
 		element.caret('pos', position );
 		ins(this.id, this.textContent + '\n');
-		broadcastInput(this.id, position);
+		broadcastInput(this.id, position);*/
 	},
 	keydown: function(event) {
 		if (event.which === 13 && !event.shiftKey) {
-			let element = $('#'+this.id);
+			inputEditor(this);
+			/*let element = $('#'+this.id);
 			let position = element.caret('pos');
 			element.html(element.text().splice(position,  0, "\n"));
 			element.caret('pos', position + 1);
-			broadcastInput(this.id, position);
+			broadcastInput(this.id, position);*/
 		}
 	}
 });
