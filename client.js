@@ -14,7 +14,7 @@ var output = process.stdout;
 
 var defaultFeedbackFunction = function(x) {
   stderr.write(x + "\n");
-}
+};
 
 // parse command-line options
 var knownOpts = {

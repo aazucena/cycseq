@@ -71,12 +71,19 @@ document.getElementById('files').addEventListener('change', loadFile, false);
 
 function ins(name, code) {
     var elem = document.getElementById(name);
+    let proxy = document.getElementById("proxy" + name.replace("edit", ""));
+
     if( elem != null) {
         sharejs.open(name, 'text', function (error, doc) {
             doc.del(0, doc.snapshot.length);
             elem.value = "";
             doc.insert(0, code);
             elem.value = code;
+
+            if( proxy != null) {
+                proxy.innerHTML = doc.snapshot;
+                Prism.highlightElement(proxy);
+            }
         });
     }
 }

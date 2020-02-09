@@ -132,34 +132,35 @@ function evaluateCode (name, code) {
 function sampleOSC(extChannel, tidalChannel, sampleName, sampleBank, executeCode, mode) {
 	let searchString = new RegExp(tidalChannel + '\\s*\\$\\s*' + mode + '\\s\\[(\\n?\\s*s\\s+\\"[a-z]+:\\d{1,3}".*,?)*\\n?\\s*\\]', "gm");
 
-	for (let x = 1; x < 4; x++) {
-		let currentid = "edit" + (parseInt((extChannel - 1) * 3) + x);
-		let samplePattern = "s \"" + sampleName + ":" + sampleBank+"\"";
-		let currentValue = document.getElementById(currentid).textContent;
-		let searchResult = currentValue.search(searchString);
+	let activeChannelEditor = document.activeElement.id;
 
-		if (searchResult === -1) {
+	//let currentid = "edit" + (parseInt((extChannel - 1) * 3) + x);
+	let samplePattern = "s \"" + sampleName + ":" + sampleBank+"\"";
+	let currentValue = document.getElementById(activeChannelEditor).textContent;
+	let searchResult = currentValue.search(searchString);
 
-			let code =tidalChannel + " $ " + mode + " [\n     "+samplePattern+"\n]";
-			let elem = document.getElementById(currentid);
-			elem.textContent = code;
+	if (searchResult === -1) {
+
+		let code =tidalChannel + " $ " + mode + " [\n     "+samplePattern+"\n]";
+		let elem = document.getElementById(activeChannelEditor);
+		elem.textContent = code;
+		Prism.highlightElement(elem);
+	} else {
+		let matchResult = currentValue.match(searchString);
+		if (matchResult.length > 0) {
+			let newResult = matchResult[0].replace("\n\]", ",\n\]");
+			newResult = newResult.replace("]", "     " + samplePattern + "\n]");
+			console.log("Matchresult: " + matchResult[0]);
+			console.log("NewResult: " + newResult);
+			currentValue = currentValue.replace(matchResult[0], newResult);
+
+			let elem = document.getElementById(activeChannelEditor);
+			elem.textContent = currentValue;
 			Prism.highlightElement(elem);
-		} else {
-			let matchResult = currentValue.match(searchString);
-			if (matchResult.length > 0) {
-				let newResult = matchResult[0].replace("\n\]", ",\n\]");
-				newResult = newResult.replace("]", "     " + samplePattern + "\n]");
-				console.log("Matchresult: " + matchResult[0]);
-				console.log("NewResult: " + newResult);
-				currentValue = currentValue.replace(matchResult[0], newResult);
-
-				let elem = document.getElementById(currentid);
-				elem.textContent = currentValue;
-				Prism.highlightElement(elem);
-			}
 		}
 	}
-	let activeChannelEditor = getActiveChannelEditor(extChannel);
+
+	//let activeChannelEditor = getActiveChannelEditor(extChannel);
 
 	if (executeCode === "1") {
 		evaluateCode(activeChannelEditor, document.getElementById(activeChannelEditor).textContent);
@@ -353,21 +354,14 @@ function inputEditor(elem, content) {
 $("code").on({
 	input: function() {
 		inputEditor(this);
-		/*let element = $('#'+this.id);
-		let position = element.caret('pos');
-		Prism.highlightElement(this);
-		element.caret('pos', position );
-		ins(this.id, this.textContent + '\n');
-		broadcastInput(this.id, position);*/
 	},
 	keydown: function(event) {
 		if (event.which === 13 && !event.shiftKey) {
-			inputEditor(this);
-			/*let element = $('#'+this.id);
+			let element = $('#'+this.id);
 			let position = element.caret('pos');
 			element.html(element.text().splice(position,  0, "\n"));
 			element.caret('pos', position + 1);
-			broadcastInput(this.id, position);*/
+			broadcastInput(this.id, position);
 		}
 	}
 });
