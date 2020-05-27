@@ -46,9 +46,22 @@ div.float-left {
     border-bottom: 1px solid #262626;
     border-right: 1px solid #777777;
     background-color: #252525;
-    width: 10%;
+    width: 5%;
     font-size: 16px;
     text-align: center;
+}
+
+.play-box {
+    width: 2%;
+    height: auto;
+    border-bottom: 1px solid #262626;
+    border-right: 1px solid #777777;
+    background-color: #252525;
+    min-width: auto;
+}
+
+.play-box:hover {
+    cursor: pointer;
 }
 
 .header-box {

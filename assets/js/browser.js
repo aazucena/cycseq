@@ -359,14 +359,19 @@ function removeEditor(row) {
 	fixEditorIds();
 }
 
-/*  <div class="row">
-		<pre id="editor-cycle-1" spellcheck="false" contenteditable="true" class="config-box"></pre>
-		<pre><code tabindex="5" id="edit1" spellcheck="false" contenteditable="true" class="language-tidal"></code></pre>
-	</div>*/
+//<img role="button" onclick="startFrom(1)" class="play-box" src="assets/img/play.svg" />
+
 
 function newEditorElement(number) {
 	let div = document.createElement("div");
 	div.classList.add('row');
+
+	let playButton = document.createElement("img");
+	playButton.addEventListener("click", () => startFrom(number), false);
+	playButton.setAttribute("src", "assets/img/play.svg");
+	playButton.setAttribute("role", "button");
+	playButton.setAttribute("id", "play-" + number);
+	playButton.classList.add('play-box');
 
 	let cyclePre = document.createElement("pre");
 	cyclePre.setAttribute("id", "editor-cycle-" + number);
@@ -386,6 +391,7 @@ function newEditorElement(number) {
 
 	editorPre.append(editorCode);
 
+	div.append(playButton);
 	div.append(cyclePre);
 	div.append(editorPre);
 
@@ -401,14 +407,20 @@ function fixEditorIds() {
 	let contentWrapper = receiveContentWrapper();
 
 	for (let i = 0; i < contentWrapper.childElementCount; i++) {
-		contentWrapper.children[i].children[0].setAttribute("id", "editor-cycle-" + (i+1));
-		contentWrapper.children[i].children[1].children[0].setAttribute("id", "edit" + (i+1));
-		contentWrapper.children[i].children[1].children[0].setAttribute("tabindex", i+1+4);
+
+		let playButton = document.createElement("img");
+		playButton.addEventListener("click", () => startFrom(i+1), false);
+		playButton.setAttribute("src", "assets/img/play.svg");
+		playButton.setAttribute("role", "button");
+		playButton.setAttribute("id", "play-" + (i+1));
+
+		playButton.classList.add('play-box');
+
+		contentWrapper.children[i].children[0].replaceWith(playButton);
+		contentWrapper.children[i].children[1].setAttribute("id", "editor-cycle-" + (i+1));
+		contentWrapper.children[i].children[2].children[0].setAttribute("id", "edit" + (i+1));
+		contentWrapper.children[i].children[2].children[0].setAttribute("tabindex", i+1+4);
 	}
-}
-
-function playFromEditor() {
-
 }
 
 // Editor input Control

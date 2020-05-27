@@ -29,11 +29,6 @@
 
   <div class="header">
       <div class="float-left">
-          <!--
-          <a tabindex="1" class="icon-link" href="single.html"><img class="icon-btns" src="assets/img/gsingle.png" /></a>
-          <a tabindex="2" class="icon-link" href="hlayout.html"><img class="icon-btns" src="assets/img/ghlayout.png" /></a>
-          <a tabindex="3" href="vlayout.html"><img class="icon-btns" src="assets/img/gvlayout.png" /></a>
-          <a tabindex="4" class="icon-link" href="./grid.html"><img class="icon-btns" src="assets/img/gmlayout.png" /></a>-->
           <span id="peers" class="link-box" >Link</span>
           <span id="tempo" class="link-box" >120</span>
           <span class="space-50" ></span>
@@ -52,22 +47,26 @@
   </div>
  <hr/>
     <div class="row" style="min-height: 20px;">
+        <pre spellcheck="false" class="header-box play-box"></pre>
         <pre spellcheck="false" class="config-box header-box">Cycle</pre>
         <pre spellcheck="false" class="config-box header-box" style="width: 100%">Editor</pre>
     </div>
 
     <div id="editor-wrapper">
         <div class="row">
+            <img id="play-1" role="button" onclick="startFrom(1)" class="play-box" src="assets/img/play.svg" />
             <pre id="editor-cycle-1" spellcheck="false" contenteditable="true" class="config-box"></pre>
             <pre><code tabindex="5" id="edit1" spellcheck="false" contenteditable="true" class="language-tidal"></code></pre>
 
         </div>
         <div class="row">
+            <img id="play-2" role="button" onclick="startFrom(2)" class="play-box" src="assets/img/play.svg" />
             <pre id="editor-cycle-2" spellcheck="false" contenteditable="true" class="config-box"></pre>
             <pre><code tabindex="6" id="edit2" spellcheck="false" contenteditable="true" class="language-tidal"></code></pre>
         </div>
 
         <div class="row">
+            <img id="play-3" role="button" onclick="startFrom(3)" class="play-box" src="assets/img/play.svg" />
             <pre id="editor-cycle-3" spellcheck="false" contenteditable="true" class="config-box"></pre>
             <pre><code tabindex="7" id="edit3" spellcheck="false" contenteditable="true" class="language-tidal"></code></pre>
         </div>

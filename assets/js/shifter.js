@@ -16,12 +16,18 @@ function start() {
     cycleCounter = 1;
 }
 
-function stop() {
-    const editors = document.getElementsByTagName("code");
+function startFrom(number) {
+    removeActiveClass();
 
-    for (let i = 0; i < editors.length; i++) {
-        editors[i].classList.remove('active');
-    }
+    isStarted = true;
+    isRunning = false;
+    editorNumber = number;
+    cycleCounter = 1;
+}
+
+
+function stop() {
+    removeActiveClass();
 
     isStarted = false;
     isRunning = false;
@@ -29,6 +35,14 @@ function stop() {
     cycleCounter = 1;
 
     evaluateCode("editorX", "hush");
+}
+
+function removeActiveClass () {
+    const editors = document.getElementsByTagName("code");
+
+    for (let i = 0; i < editors.length; i++) {
+        editors[i].classList.remove('active');
+    }
 }
 
 function next(editorNumber) {
@@ -89,7 +103,7 @@ function linkWS() {
 
             if (isStarted && beat > trigger && trigger > 0.0) {
                     if (!isRunning) {
-                        next(1);
+                        next(editorNumber);
                         isRunning = true
                     } else {
                         let editorCycles = parseInt(document.getElementById(EDITOR_CYCLE_ID + editorNumber).innerText, 10);
