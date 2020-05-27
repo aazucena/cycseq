@@ -1,0 +1,57 @@
+.link-box {
+    line-height: 16px;
+    padding: 4px;
+    margin-left: 8px;
+    background-color: #777777;
+    color: black;
+}
+
+.space-10 {
+    margin-left: 10px;
+}
+
+.space-20 {
+    margin-left: 20px;
+}
+
+.space-50 {
+    margin-left: 50px;
+}
+
+div.float-left {
+    display: flex;
+}
+
+.icon-link {
+    margin-left: 8px;
+}
+
+.icon-link:hover {
+    cursor: pointer;
+}
+
+.icon-smaller {
+    width: 22px
+}
+
+.active-record {
+    fill: red;
+}
+
+.active-play {
+}
+
+.config-box {
+    height: auto;
+    border-bottom: 1px solid #262626;
+    border-right: 1px solid #777777;
+    background-color: #252525;
+    width: 10%;
+    font-size: 16px;
+    text-align: center;
+}
+
+.header-box {
+    height: 20px;
+    background-color: #1a1a1a;;
+}

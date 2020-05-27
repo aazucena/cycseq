@@ -18,7 +18,7 @@ div.editor, textarea, pre {
 
 pre {
   min-height: 100%;
-  min-width: 200px;
+  min-width: 100px;
   background: #2B2B2B;
   margin: 0;
   transition: background-color 0.5s ease;
@@ -71,11 +71,13 @@ code:focus {
   box-shadow: 0 0 0.2em #ffc800;
 }
 
+.active {
+  border: 1px solid #ffc800;
+}
 
 div.row {
-  float: left;
   width: 100%;
-  min-height: 145px;
+  min-height: 50px;
   margin-bottom: 0.4%;
 }
 
@@ -136,7 +138,7 @@ left: 0;
 top: 0;
 }
 
-img.icon-btns {
+a.icon-link, img.icon-btns {
   width: 24px;
   height: 24px;
   background-color: #2B2B2B;
@@ -155,6 +157,7 @@ div.header {
   width: 99%;
   margin-bottom: 16px;
   padding-left: 20px;
+  height: 22px;
 }
 
 hr {

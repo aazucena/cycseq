@@ -2,7 +2,6 @@
 require('coffee-script');
 var http = require('http');
 var express = require('express');
-var sharejs = require('share');
 var nopt = require('nopt');
 // var zmq = require('zmq');
 var WebSocket = require('ws');
@@ -177,7 +176,8 @@ function sendOSCTriggerMessage(name) {
 }
 
 function evaluateBuffer(name) {
-  sharejs.client.open(name,'text','http://127.0.0.1:' + wsPort + '/channel', function (err,doc) {
+    console.log(name);
+  /*sharejs.client.open(name,'text','http://127.0.0.1:' + wsPort + '/channel', function (err,doc) {
     //var t = doc.getText().replace(/--.*\n/g, "").replace(/\r?\n|\r/g, "").replace(/\t/g, "");
     var t = doc.getText().replace(/--.*\n/g, "\n").replace(/\t/g, "").replace(/\n\]/g, "]");
     var n = { type: 'eval', code: t };
@@ -185,7 +185,7 @@ function evaluateBuffer(name) {
     catch (e) { stderr.write("warning: exception in WebSocket broadcast\n"); }
     console.log(JSON.stringify(n));
     // pub.send(doc.getText());
-  });
+  });*/
 }
 
 function evaluateJavaScriptGlobally(code) {
@@ -206,10 +206,8 @@ function forwardFeedbackFromClient(text) {
     catch(e) { stderr.write("warning: exception in WebSocket broadcast\n"); }
 }
 
-var shareserver = sharejs.server.attach(expressServer, options);
-
 expressServer.get('/?', function(req, res) {
-  res.writeHead(302, {location: '/index.html'});
+  res.writeHead(302, {location: '/grid.html'});
   res.end();
 });
 httpServer.listen(wsPort);

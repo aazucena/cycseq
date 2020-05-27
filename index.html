@@ -2,16 +2,20 @@
 <html lang="en">
 <head>
  <title>extramuros</title>
- <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
- <link href="assets/css/prism.css" rel="stylesheet" type="text/css" />
- <link rel="stylesheet" type="text/css" href="assets/css/style.css">
- <link rel="stylesheet" type="text/css" href="assets/css/mLayout.css">
- <script src="assets/js/caret.js" type="text/javascript"></script>
- <script src="assets/js/prism.js" type="text/javascript"></script>
+ <!--<script src="/socket.io/socket.io.js"></script>-->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script src="assets/js/caret.js" type="text/javascript"></script>
+  <script src="assets/js/prism.js" type="text/javascript"></script>
+  <script src="assets/js/p5.min.js"></script>
+  <script src="assets/js/p5.sound.min.js"></script>
 
+  <link href="assets/css/prism.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+  <link rel="stylesheet" type="text/css" href="assets/css/mLayout.css">
+  <link href="assets/css/link.css" rel="stylesheet" type="text/css" />
 </head>
 
-<body onload="setup(12)">
+<body onload="initiate(3)">
 <script type="text/javascript">
     // Optional
     Prism.plugins.NormalizeWhitespace.setDefaults({
@@ -25,10 +29,20 @@
 
   <div class="header">
       <div class="float-left">
-          <a tabindex="1" href="single.html"><img class="icon-btns" src="assets/img/gsingle.png" /></a>
-          <a tabindex="2" href="hlayout.html"><img class="icon-btns" src="assets/img/ghlayout.png" /></a>
-          <!--<a tabindex="3" href="vlayout.html"><img class="icon-btns" src="assets/img/gvlayout.png" /></a>-->
-          <a tabindex="4" href="./index.html"><img class="icon-btns" src="assets/img/gmlayout.png" /></a>
+          <!--
+          <a tabindex="1" class="icon-link" href="single.html"><img class="icon-btns" src="assets/img/gsingle.png" /></a>
+          <a tabindex="2" class="icon-link" href="hlayout.html"><img class="icon-btns" src="assets/img/ghlayout.png" /></a>
+          <a tabindex="3" href="vlayout.html"><img class="icon-btns" src="assets/img/gvlayout.png" /></a>
+          <a tabindex="4" class="icon-link" href="./grid.html"><img class="icon-btns" src="assets/img/gmlayout.png" /></a>-->
+          <span id="peers" class="link-box" >Link</span>
+          <span id="tempo" class="link-box" >120</span>
+          <span class="space-50" ></span>
+          <span id="phase" class="link-box" >1/4</span>
+          <span class="space-10" ></span>
+          <img id="play" role="button" onclick="start()" class="active-play icon-link" src="assets/img/play.svg" />
+          <img id="stop" role="button" onclick="stop()" class="icon-link" src="assets/img/stop.svg" />
+          <img id="record" class="active-record icon-link icon-smaller " src="assets/img/record.svg" />
+
       </div>
       <div class="float-right">
            <input type="file" name="ins" id="files" class="text" value="Upload"/>
@@ -37,52 +51,27 @@
       </div>
   </div>
  <hr/>
-
-    <div class="row">
-        <pre>
-            <code tabindex="5" id="edit1" spellcheck="false" contenteditable="true" class="language-tidal">
-            </code>
-        </pre>
-        <pre>
-            <code tabindex="6" id="edit2" spellcheck="false" contenteditable="true" class="language-tidal">
-            </code>
-        </pre>
-        <pre>
-            <code tabindex="7" id="edit3" spellcheck="false" contenteditable="true" class="language-tidal">
-            </code>
-        </pre>
+    <div class="row" style="min-height: 20px;">
+        <pre spellcheck="false" class="config-box header-box">Cycle</pre>
+        <pre spellcheck="false" class="config-box header-box" style="width: 100%">Editor</pre>
     </div>
 
-    <div class="row">
-        <pre>
-            <code tabindex="8" id="edit4" spellcheck="false" contenteditable="true" class="language-tidal">
-            </code>
-        </pre>
-        <pre>
-            <code tabindex="9" id="edit5" spellcheck="false" contenteditable="true" class="language-tidal">
-            </code>
-        </pre>
-        <pre>
-            <code tabindex="10" id="edit6" spellcheck="false" contenteditable="true" class="language-tidal">
-            </code>
-        </pre>
-    </div>
+    <div id="editor-wrapper">
+        <div class="row">
+            <pre id="editor-cycle-1" spellcheck="false" contenteditable="true" class="config-box"></pre>
+            <pre><code tabindex="5" id="edit1" spellcheck="false" contenteditable="true" class="language-tidal"></code></pre>
 
-    <div class="row">
-        <pre>
-            <code tabindex="11" id="edit7" spellcheck="false" contenteditable="true" class="language-tidal">
-            </code>
-        </pre>
-        <pre>
-            <code tabindex="12" id="edit8" spellcheck="false" contenteditable="true" class="language-tidal">
-            </code>
-        </pre>
-        <pre>
-            <code tabindex="13" id="edit9" spellcheck="false" contenteditable="true" class="language-tidal">
-            </code>
-        </pre>
-    </div>
+        </div>
+        <div class="row">
+            <pre id="editor-cycle-2" spellcheck="false" contenteditable="true" class="config-box"></pre>
+            <pre><code tabindex="6" id="edit2" spellcheck="false" contenteditable="true" class="language-tidal"></code></pre>
+        </div>
 
+        <div class="row">
+            <pre id="editor-cycle-3" spellcheck="false" contenteditable="true" class="config-box"></pre>
+            <pre><code tabindex="7" id="edit3" spellcheck="false" contenteditable="true" class="language-tidal"></code></pre>
+        </div>
+    </div>
  <!--
  <div class="row">
   <div class="label">Channel 4</div>
@@ -102,14 +91,11 @@
 </div>
 
  <script src="assets/js/file.js"></script>
+ <script src="assets/js/shifter.js"></script>
  <script src="assets/js/browser.js"></script>
-
- <script src="/channel/bcsocket.js"></script>
-<script src="/share/share.uncompressed.js"></script>
-<script src="/share/textarea.js"></script>
-<script src="/share/json.js"></script>
  <script src="visuals.js"></script>
 <script src="assets/js/misc.js"></script>
 
 </body>
+
 </html>

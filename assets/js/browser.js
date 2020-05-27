@@ -6,7 +6,11 @@ var osc = new Osc();
 
 jQuery.extend(Osc.prototype,jQuery.eventEmitter);
 
-function setup(nEditors) {
+
+function initiate(nEditors) {
+	linkWS();
+
+	console.log("Setup was triggered");
     window.WebSocket = window.WebSocket || window.MozWebSocket;
     var url = 'ws://' + location.hostname + ':' + location.port;
     console.log("attempting websocket connection to " + url);
@@ -19,8 +23,10 @@ function setup(nEditors) {
     };
     ws.onmessage = function (m) {
 		var data = JSON.parse(m.data);
+
 		if(data.type === 'osc') {
 			var address = data.address.substring(1);
+
 			// Tidal-specific double-mappings for incoming /play messages
 			if(address === "play") {
 				data.args.name = data.args[1];
@@ -211,18 +217,6 @@ function openExistingEditor(name) {
 }
 
 function openExistingDocument(elem, name, id) {
-	//let elem = $(".language-tidal").children()[0];
-	if( elem != null) {
-		sharejs.open(name,'text',function(error,doc) {
-			if(error) console.log(error);
-			else {
-				elem.id = id;
-				elem.innerHTML = doc.snapshot;
-				elem.disabled = false;
-				Prism.highlightElement(elem);
-			}
-		});
-	}
 }
 
 function openEditor(number) {
@@ -230,25 +224,26 @@ function openEditor(number) {
 
     let elem = document.getElementById(name);
     let proxy = document.getElementById("proxy" + number);
-
-	sharejs.open(name,'text',function(error,doc) {
-		if(error) console.log(error);
-		else {
-			if( elem != null) {
-				elem.innerHTML = doc.snapshot;
-				elem.disabled = false;
-				Prism.highlightElement(elem);
-			}
-			if( proxy != null) {
-				proxy.innerHTML = doc.snapshot;
-				Prism.highlightElement(proxy);
-			}
-		}
-	});
 }
 
-function setupKeyboardHandlers() {
-    $('code').keydown(function (event) {
+function setupKeyboardHandlers(id) {
+	if (id === undefined) {
+		id = 'code';
+
+		$('body').keydown(function (event) {
+			if (event.keyCode === 13 && event.altKey) {
+				newEditor();
+			}
+		});
+
+	} else {
+		id = "#" + id;
+	}
+
+    $(id).keydown(function (event) {
+		if (event.keyCode === 46 && event.altKey) {
+			removeEditor(event.currentTarget.parentNode.parentNode);
+		}
 		if(event.which === 13 && event.shiftKey && event.ctrlKey) {
 			// ctrl+shift+enter: evaluate buffer as Javascript through server
 			event.preventDefault();
@@ -289,6 +284,21 @@ function setupKeyboardHandlers() {
 		}
 
     });
+
+	$(id).on({
+		input: function() {
+			inputEditor(this);
+		},
+		keydown: function(event) {
+			if (event.which === 13 && !event.shiftKey) {
+				let element = $('#'+this.id);
+				let position = element.caret('pos');
+				element.html(element.text().splice(position,  0, "\n"));
+				element.caret('pos', position + 1);
+				broadcastInput(this.id, position);
+			}
+		}
+	});
 
 }
 
@@ -331,6 +341,78 @@ function retriggerAnimation(id) {
 //26// I "loop" (Just 1)
 // ]
 
+
+// Remove, add and play functions for keyboard control
+function newEditor() {
+	let contentWrapper = receiveContentWrapper();
+	let newElement = newEditorElement(contentWrapper.childElementCount + 1);
+
+	contentWrapper.append(newElement);
+
+	setupKeyboardHandlers("edit" + (contentWrapper.childElementCount));
+
+}
+
+function removeEditor(row) {
+	let contentWrapper = receiveContentWrapper();
+	contentWrapper.removeChild(row);
+	fixEditorIds();
+}
+
+/*  <div class="row">
+		<pre id="editor-cycle-1" spellcheck="false" contenteditable="true" class="config-box"></pre>
+		<pre><code tabindex="5" id="edit1" spellcheck="false" contenteditable="true" class="language-tidal"></code></pre>
+	</div>*/
+
+function newEditorElement(number) {
+	let div = document.createElement("div");
+	div.classList.add('row');
+
+	let cyclePre = document.createElement("pre");
+	cyclePre.setAttribute("id", "editor-cycle-" + number);
+	cyclePre.setAttribute("spellcheck", "false");
+	cyclePre.setAttribute("contenteditable", "true");
+	cyclePre.classList.add("config-box");
+
+	let editorPre = document.createElement("pre");
+	editorPre.classList.add("language-tidal")
+
+	let editorCode = document.createElement("code");
+	editorCode.setAttribute("id", "edit" + number);
+	editorCode.setAttribute("tabindex", number + 4);
+	editorCode.setAttribute("spellcheck", "false");
+	editorCode.setAttribute("contenteditable", "true");
+	editorCode.classList.add("language-tidal");
+
+	editorPre.append(editorCode);
+
+	div.append(cyclePre);
+	div.append(editorPre);
+
+	return div;
+}
+
+function receiveContentWrapper() {
+	return document.getElementById('editor-wrapper');
+}
+
+
+function fixEditorIds() {
+	let contentWrapper = receiveContentWrapper();
+
+	for (let i = 0; i < contentWrapper.childElementCount; i++) {
+		contentWrapper.children[i].children[0].setAttribute("id", "editor-cycle-" + (i+1));
+		contentWrapper.children[i].children[1].children[0].setAttribute("id", "edit" + (i+1));
+		contentWrapper.children[i].children[1].children[0].setAttribute("tabindex", i+1+4);
+	}
+}
+
+function playFromEditor() {
+
+}
+
+// Editor input Control
+
 String.prototype.splice = function(idx, rem, str) {
 	return this.slice(0, idx) + str + this.slice(idx + Math.abs(rem));
 };
@@ -351,17 +433,3 @@ function inputEditor(elem, content) {
 	broadcastInput(elem.id, position);
 }
 
-$("code").on({
-	input: function() {
-		inputEditor(this);
-	},
-	keydown: function(event) {
-		if (event.which === 13 && !event.shiftKey) {
-			let element = $('#'+this.id);
-			let position = element.caret('pos');
-			element.html(element.text().splice(position,  0, "\n"));
-			element.caret('pos', position + 1);
-			broadcastInput(this.id, position);
-		}
-	}
-});

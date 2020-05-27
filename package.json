@@ -2,18 +2,21 @@
 				"name": "extramuros",
 				"version": "0.0.3",
 				"scripts": {
-								"start": "concurrently --default-input-target 1 -i --kill-others -n \"server,client\" \"npm run start:server\" \"npm run start:client\"",
+								"start": "concurrently --default-input-target 1 -i --kill-others -n \"server,client,link\" \"npm run start:server\" \"npm run start:client\" \"npm run start:linkserver\"",
 								"start:server": "node server.js --password p -o 57121 -s 57120",
-								"start:client": "node client.js --server 127.0.0.1 --tidalCabal"
+								"start:client": "node client.js --server 127.0.0.1 --tidalCabal",
+								"start:linkserver": "node linkserver.js"
 				},
 				"dependencies": {
+								"abletonlink-addon": "^0.2.1",
 								"coffee-script": "*",
-								"concurrently": "^5.1.0",
+								"concurrently": "^5.2.0",
 								"express": "*",
 								"highlight-within-textarea": "^2.0.5",
-								"nopt": "*",
-								"osc": "*",
-								"share": "0.6.3",
-								"ws": "*"
+								"nan": "^2.14.1",
+								"nopt": "^4.0.3",
+								"osc": "^2.4.1",
+								"socket.io": "^2.3.0",
+								"ws": "^7.3.0"
 				}
 }
