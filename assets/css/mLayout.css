@@ -1,6 +1,5 @@
 div.row {
     display: flex;
-    min-height: 50px;
 }
 
 div.row > pre {

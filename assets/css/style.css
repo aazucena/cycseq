@@ -6,9 +6,6 @@ body {
 }
 
 /*  Editor  */
-div.editor, pre, code {
-  min-height: 120px;
-}
 
 div.editor, textarea, pre {
   background: #2b2b2b;
@@ -77,7 +74,14 @@ code:focus {
 
 div.row {
   width: 100%;
-  min-height: 50px;
+  min-height: 22px;
+  margin-bottom: 0.4%;
+}
+
+div.header-row {
+  width: 100%;
+  display: flex;
+  min-height: 20px;
   margin-bottom: 0.4%;
 }
 

@@ -6,9 +6,7 @@ body {
 }
 
 /*  Editor  */
-div.editor, pre, code {
-  min-height: 120px;
-}
+
 
 div.editor, textarea, pre {
   background: #2b2b2b;

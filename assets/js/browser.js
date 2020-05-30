@@ -241,7 +241,8 @@ function setupKeyboardHandlers(id) {
 	}
 
     $(id).keydown(function (event) {
-		if (event.keyCode === 46 && event.altKey) {
+    	console.log(event);
+		if (event.keyCode === 8 && event.altKey) {
 			removeEditor(event.currentTarget.parentNode.parentNode);
 		}
 		if(event.which === 13 && event.shiftKey && event.ctrlKey) {
@@ -363,8 +364,11 @@ function removeEditor(row) {
 
 
 function newEditorElement(number) {
+	let slider = document.getElementById("width-range");
+
 	let div = document.createElement("div");
 	div.classList.add('row');
+	div.style.minHeight = slider.value + "px";
 
 	let playButton = document.createElement("img");
 	playButton.addEventListener("click", () => startFrom(number), false);
@@ -380,7 +384,8 @@ function newEditorElement(number) {
 	cyclePre.classList.add("config-box");
 
 	let editorPre = document.createElement("pre");
-	editorPre.classList.add("language-tidal")
+	editorPre.classList.add("language-tidal");
+	editorPre.classList.add("editor-box");
 
 	let editorCode = document.createElement("code");
 	editorCode.setAttribute("id", "edit" + number);
@@ -445,3 +450,17 @@ function inputEditor(elem, content) {
 	broadcastInput(elem.id, position);
 }
 
+// Slider
+let slider = document.getElementById("width-range");
+let rows = document.getElementsByClassName("row");
+
+for (let i = 0; i < rows.length; i++) {
+	rows.item(i).style.minHeight = slider.value + "px";
+}
+
+// Update the current slider value (each time you drag the slider handle)
+slider.oninput = function() {
+	for (let i = 0; i < rows.length; i++) {
+		rows.item(i).style.minHeight = slider.value + "px";
+	}
+};

@@ -13,6 +13,7 @@
   <link rel="stylesheet" type="text/css" href="assets/css/style.css">
   <link rel="stylesheet" type="text/css" href="assets/css/mLayout.css">
   <link href="assets/css/link.css" rel="stylesheet" type="text/css" />
+  <link href="assets/css/slider.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body onload="initiate(3)">
@@ -37,7 +38,10 @@
           <img id="play" role="button" onclick="start()" class="active-play icon-link" src="assets/img/play.svg" />
           <img id="stop" role="button" onclick="stop()" class="icon-link" src="assets/img/stop.svg" />
           <img id="record" class="active-record icon-link icon-smaller " src="assets/img/record.svg" />
-
+          <span class="space-50" ></span>
+          <div class="slidecontainer">
+              <input type="range" min="24" max="200" value="100" class="slider" id="width-range">
+          </div>
       </div>
       <div class="float-right">
            <input type="file" name="ins" id="files" class="text" value="Upload"/>
@@ -46,7 +50,7 @@
       </div>
   </div>
  <hr/>
-    <div class="row" style="min-height: 20px;">
+    <div class="header-row">
         <pre spellcheck="false" class="header-box play-box"></pre>
         <pre spellcheck="false" class="config-box header-box">Cycle</pre>
         <pre spellcheck="false" class="config-box header-box" style="width: 100%">Editor</pre>
@@ -56,19 +60,19 @@
         <div class="row">
             <img id="play-1" role="button" onclick="startFrom(1)" class="play-box" src="assets/img/play.svg" />
             <pre id="editor-cycle-1" spellcheck="false" contenteditable="true" class="config-box"></pre>
-            <pre><code tabindex="5" id="edit1" spellcheck="false" contenteditable="true" class="language-tidal"></code></pre>
+            <pre class="editor-box"><code tabindex="5" id="edit1" spellcheck="false" contenteditable="true" class="language-tidal"></code></pre>
 
         </div>
         <div class="row">
             <img id="play-2" role="button" onclick="startFrom(2)" class="play-box" src="assets/img/play.svg" />
             <pre id="editor-cycle-2" spellcheck="false" contenteditable="true" class="config-box"></pre>
-            <pre><code tabindex="6" id="edit2" spellcheck="false" contenteditable="true" class="language-tidal"></code></pre>
+            <pre class="editor-box"><code tabindex="6" id="edit2" spellcheck="false" contenteditable="true" class="language-tidal"></code></pre>
         </div>
 
         <div class="row">
             <img id="play-3" role="button" onclick="startFrom(3)" class="play-box" src="assets/img/play.svg" />
             <pre id="editor-cycle-3" spellcheck="false" contenteditable="true" class="config-box"></pre>
-            <pre><code tabindex="7" id="edit3" spellcheck="false" contenteditable="true" class="language-tidal"></code></pre>
+            <pre class="editor-box"><code tabindex="7" id="edit3" spellcheck="false" contenteditable="true" class="language-tidal"></code></pre>
         </div>
     </div>
  <!--
@@ -90,7 +94,7 @@
 </div>
 
  <script src="assets/js/file.js"></script>
- <script src="assets/js/shifter.js"></script>
+ <script src="assets/js/sequencer.js"></script>
  <script src="assets/js/browser.js"></script>
  <script src="visuals.js"></script>
 <script src="assets/js/misc.js"></script>
