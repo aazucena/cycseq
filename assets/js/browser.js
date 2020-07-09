@@ -62,7 +62,14 @@ function setupKeyboardHandlers(id) {
 	if (id === undefined) {
 		id = 'code';
 		$('body').keydown(function (event) {
-			if (event.keyCode === 13 && event.altKey) newEditor("", "");
+			if (event.keyCode === 13 && event.altKey) {
+				if (!event.target.id.startsWith("edit")) newEditor("", "");
+				else {
+					event.target.parentNode.parentNode.after(newEditorElement(0, "",""));
+					setupKeyboardHandlers("edit0");
+					fixEditorIds();
+				}
+			}
 		});
 	} else {
 		id = "#" + id;
@@ -204,7 +211,6 @@ function inputEditor(elem, content) {
 
 	Prism.highlightElement(elem);
 	element.caret('pos', position );
-	ins(elem.id, elem.textContent + '\n');
 }
 
 // Slider
