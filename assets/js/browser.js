@@ -1,8 +1,6 @@
-var ws;
+var sequencerWs;
 
 function Osc() {}
-
-var osc = new Osc();
 
 jQuery.extend(Osc.prototype,jQuery.eventEmitter);
 
@@ -11,16 +9,16 @@ function initiate() {
 	window.WebSocket = window.WebSocket || window.MozWebSocket;
     var url = 'ws://' + location.hostname + ':' + location.port;
     console.log("attempting websocket connection to " + url);
-    ws = new WebSocket(url);
-    ws.onopen = function () {
+    sequencerWs = new WebSocket(url);
+    sequencerWs.onopen = function () {
 		console.log("extramuros websocket connection opened");
     };
-    ws.onerror = function () {
+    sequencerWs.onerror = function () {
 		console.log("ERROR opening extramuros websocket connection");
     };
-    ws.onmessage = function (m) {
+    sequencerWs.onmessage = function (m) {
 		let data = JSON.parse(m.data);
-
+		console.log(data);
 		if(data.type === 'osc') {
 			var address = data.address.substring(1);
 
@@ -34,9 +32,21 @@ function initiate() {
 				data.args.gain = data.args[14];
 				// full list of parameters at bottom
 			}  else {
-				$(osc).trigger(address);
+				//$(osc).trigger(address);
 				eval( address + "(data.args)");
 			}
+		}
+
+		let feedbackContainer = document.getElementById("feedback-container");
+
+		if (data.type === 'feedback') {
+			let p = document.createElement("p");
+			let content = data.text.replace(/tidal>/g, '');
+			p.textContent = content;
+
+			feedbackContainer.appendChild(p);
+		} else {
+			feedbackContainer.innerHTML = '';
 		}
     };
 
@@ -45,21 +55,20 @@ function initiate() {
 
 function evaluateCode (name, code) {
 	let msg = { request: "evalCode", bufferName: name, code: code };
-	ws.send(JSON.stringify(msg));
+	sequencerWs.send(JSON.stringify(msg));
 }
 
 function setupKeyboardHandlers(id) {
 	if (id === undefined) {
 		id = 'code';
 		$('body').keydown(function (event) {
-			if (event.keyCode === 13 && event.altKey) newEditor();
+			if (event.keyCode === 13 && event.altKey) newEditor("", "");
 		});
 	} else {
 		id = "#" + id;
 	}
 
     $(id).keydown(function (event) {
-    	console.log(event);
 		if (event.keyCode === 8 && event.altKey) {
 			removeEditor(event.currentTarget.parentNode.parentNode);
 		}
@@ -97,9 +106,9 @@ function retriggerAnimation(id) {
 }
 
 // Remove, add and play functions for keyboard control
-function newEditor() {
+function newEditor(cycle, content) {
 	let contentWrapper = receiveContentWrapper();
-	let newElement = newEditorElement(contentWrapper.childElementCount + 1);
+	let newElement = newEditorElement(contentWrapper.childElementCount + 1, cycle, content);
 
 	contentWrapper.append(newElement);
 
@@ -112,7 +121,7 @@ function removeEditor(row) {
 	fixEditorIds();
 }
 
-function newEditorElement(number) {
+function newEditorElement(number, cycle, content) {
 	let slider = document.getElementById("width-range");
 
 	let div = document.createElement("div");
@@ -130,6 +139,7 @@ function newEditorElement(number) {
 	cyclePre.setAttribute("id", "editor-cycle-" + number);
 	cyclePre.setAttribute("spellcheck", "false");
 	cyclePre.setAttribute("contenteditable", "true");
+	cyclePre.innerText = cycle;
 	cyclePre.classList.add("config-box");
 
 	let editorPre = document.createElement("pre");
@@ -141,6 +151,7 @@ function newEditorElement(number) {
 	editorCode.setAttribute("tabindex", number + 4);
 	editorCode.setAttribute("spellcheck", "false");
 	editorCode.setAttribute("contenteditable", "true");
+	editorCode.innerText = content;
 	editorCode.classList.add("language-tidal");
 
 	editorPre.append(editorCode);

@@ -1,9 +1,31 @@
 .link-box {
     line-height: 16px;
     padding: 4px;
-    margin-left: 8px;
     background-color: #777777;
     color: black;
+}
+
+
+.header-input {
+    border: 0;
+    background-color: #777777;
+    font-family: monospace;
+    padding: 4px;
+    line-height: 16px;
+}
+
+.header-input:focus {
+    outline-width: 0;
+}
+
+.header-input[type='number']::-webkit-inner-spin-button,
+.header-input[type='number']::-webkit-outer-spin-button {
+    opacity: 1;
+    background-color: red;
+}
+
+.space-5 {
+    margin-left: 5px;
 }
 
 .space-10 {
@@ -71,4 +93,21 @@ div.float-left {
 
 .editor-box {
     height: auto;
+}
+
+.icon-button {
+     line-height:0;
+     padding: 0;
+     width: 26px;
+     padding-left: 6px;
+     padding-top: 2px;
+ }
+
+.icon-button:hover {
+    cursor: pointer;
+}
+
+.icon-button > img {
+    width: 20px;
+    margin: auto;
 }

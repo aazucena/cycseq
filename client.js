@@ -1,4 +1,6 @@
 // our required dependencies
+const {chunksToLinesAsync, chomp} = require('@rauschma/stringio');
+
 var spawn = require('child_process').spawn;
 var nopt = require('nopt');
 // var zmq = require('zmq');
@@ -11,10 +13,6 @@ var path = require('path');
 var stdin = process.stdin;
 var stderr = process.stderr;
 var output = process.stdout;
-
-var defaultFeedbackFunction = function(x) {
-  stderr.write(x + "\n");
-};
 
 // parse command-line options
 var knownOpts = {
@@ -65,6 +63,13 @@ if(process.argv.length<3) {
     stderr.write("extramuros: use --help to display available options\n");
 }
 
+var defaultFeedbackFunction = function(x, ws) {
+    stderr.write(x + "\n");
+    try {ws.send(JSON.stringify({request: 'feedback', text: x}))}
+    catch(e) {stderr.write("warning: exception in WebSocket send\n")}
+};
+
+
 // before setting up connections, set some defaults and look for problems
 var newlines = parsed['newlines-as-spaces'];
 var server = parsed['server'];
@@ -102,20 +107,38 @@ if(withCustomTidalBoot!=null) {                      // custom tidal boot file p
 
 var child;
 var tidal;
+var buf = '';
+var buf2 = '';
+
+function main (ws) {
 if(withTidal != null) {
+
     if(withTidalCabal != null) tidal = spawn('ghci', ['-XOverloadedStrings']);
     else tidal = spawn('stack',['ghci','--ghci-options','-XOverloadedStrings']);
     tidal.on('close', function (code) {
       stderr.write('Tidal process exited with code ' + code + "\n");
     });
+
     output = tidal.stdin;
     feedbackSource = tidal.stderr;
+
     tidal.stderr.addListener("data", function(m) {
-      defaultFeedbackFunction(m.toString());
+        buf += m;
+
+        if (buf.toString().endsWith("\n")) {
+            defaultFeedbackFunction(buf.toString(), ws);
+            buf = '';
+        }
     });
+
     tidal.stdout.addListener("data", function(m) {
-      defaultFeedbackFunction(m.toString());
+        buf2 += m;
+        if (buf2.toString().endsWith("\n")) {
+            defaultFeedbackFunction(buf2.toString(), ws);
+            buf2 = '';
+        }
     });
+
     var dotGhci;
     if(withCustomTidalBoot != null) { dotGhci = withCustomTidalBoot; }
     else if(withTidalVisuals == true) { dotGhci = ".ghciVisuals"; }
@@ -127,7 +150,7 @@ if(withTidal != null) {
     });
     child = tidal;
 }
-
+}
 function sanitizeStringForTidal(x) {
   var lines = x.split("\n");
   var result = "";
@@ -161,22 +184,26 @@ if(oscPort !=null) {
 }
 
 var connectWs = function() {
-    stderr.write("extramuros: connecting to " + wsAddress + "...\n");
     var ws = new WebSocket(wsAddress);
     var udp,oscFunction,feedbackFunction;
+
+    stderr.write("extramuros: connecting to " + wsAddress + "...\n");
 
     send = function(o) {
       try {ws.send(JSON.stringify(o))}
       catch(e) {stderr.write("warning: exception in WebSocket send\n")}
-    }
+    };
+
+    main(ws);
 
     oscFunction = function(m) {
       send({ 'request': 'oscFromClient', 'password' : password, 'address': m.address, 'args': m.args });
-    }
+    };
 
     feedbackFunction = function(m) {
-      send({'request': 'feedback','password' : password,'text': m.toString() });
-    }
+        send({'request': 'feedback','password' : password,'text': m.toString() });
+        //send({'request': 'feedback','password' : password,'text': "Hallo Welt" });
+    };
 
     ws.on('open',function() {
       stderr.write("extramuros: connected to " + wsAddress + "\n");
@@ -235,8 +262,10 @@ var connectWs = function() {
 if(wsAddress != null) connectWs();
 
 stdin.addListener("data", function (t) {
-  output.write(t+"\n");
+    //t = t.replace(/--.*\n/g, "\n").replace(/\t/g, "").replace(/\n\]/g, "]");
+    //output.write(t+"\n");
 });
 
+main();
 
-process.on('SIGINT', function() { /* sub.close(); */ ws.close(); } );
+process.on('SIGINT', function() { /* sub.close(); */ sequencerWs.close(); } );

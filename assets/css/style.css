@@ -79,7 +79,7 @@ div.row {
 }
 
 div.header-row {
-  width: 100%;
+  width: 80%;
   display: flex;
   min-height: 20px;
   margin-bottom: 0.4%;

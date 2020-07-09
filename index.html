@@ -8,6 +8,7 @@
   <script src="assets/js/prism.js" type="text/javascript"></script>
   <script src="assets/js/p5.min.js"></script>
   <script src="assets/js/p5.sound.min.js"></script>
+  <script src="node_modules/osc/dist/osc-browser.min.js"></script>
 
   <link href="assets/css/prism.css" rel="stylesheet" type="text/css" />
   <link rel="stylesheet" type="text/css" href="assets/css/style.css">
@@ -31,17 +32,24 @@
   <div class="header">
       <div class="float-left">
           <span id="peers" class="link-box" >Link</span>
+          <span class="space-5" ></span>
           <span id="tempo" class="link-box" >120</span>
-          <span class="space-50" ></span>
+          <span class="space-20" ></span>
           <span id="phase" class="link-box" >1/4</span>
-          <span class="space-10" ></span>
+          <span class="space-5" ></span>
+          <input type="number" value="4.8" step="0.1" min="1" max="4.9" class="header-input" id="cycles-trigger">
+          <span class="space-20" ></span>
           <img id="play" role="button" onclick="start()" class="active-play icon-link" src="assets/img/play.svg" />
           <img id="stop" role="button" onclick="stop()" class="icon-link" src="assets/img/stop.svg" />
-          <img id="record" class="active-record icon-link icon-smaller " src="assets/img/record.svg" />
-          <span class="space-50" ></span>
+          <img id="record" role="button"  onclick="record()" class="active-record icon-link icon-smaller " src="assets/img/record.svg" />
+          <span class="space-20" ></span>
           <div class="slidecontainer">
               <input type="range" min="24" max="200" value="100" class="slider" id="width-range">
           </div>
+          <span class="space-20" ></span>
+          <span id="repeat-button" class="link-box icon-button" onclick="toggleRepeat(this)">
+              <img id="repeat" src="assets/img/repeat.png" /></span>
+          <span class="space-20" ></span>
       </div>
       <div class="float-right">
            <input type="file" name="ins" id="files" class="text" value="Upload"/>
@@ -50,36 +58,44 @@
       </div>
   </div>
  <hr/>
-    <div class="header-row">
-        <pre spellcheck="false" class="header-box play-box"></pre>
-        <pre spellcheck="false" class="config-box header-box">Cycle</pre>
-        <pre spellcheck="false" class="config-box header-box" style="width: 100%">Editor</pre>
+    <div id="content-wrapper">
+        <div id="editor-table">
+            <div class="header-row">
+                <pre spellcheck="false" class="header-box play-box"></pre>
+                <pre spellcheck="false" class="config-box header-box">Cycle</pre>
+                <pre spellcheck="false" class="config-box header-box" style="width: 100%">Editor</pre>
+            </div>
+            <div id="editor-wrapper">
+                <div class="row">
+                    <img id="play-1" role="button" onclick="startFrom(1)" class="play-box" src="assets/img/play.svg" />
+                    <pre id="editor-cycle-1" spellcheck="false" contenteditable="true" class="config-box"></pre>
+                    <pre class="editor-box"><code tabindex="5" id="edit1" spellcheck="false" contenteditable="true" class="language-tidal"></code></pre>
+
+                </div>
+                <div class="row">
+                    <img id="play-2" role="button" onclick="startFrom(2)" class="play-box" src="assets/img/play.svg" />
+                    <pre id="editor-cycle-2" spellcheck="false" contenteditable="true" class="config-box"></pre>
+                    <pre class="editor-box"><code tabindex="6" id="edit2" spellcheck="false" contenteditable="true" class="language-tidal"></code></pre>
+                </div>
+
+                <div class="row">
+                    <img id="play-3" role="button" onclick="startFrom(3)" class="play-box" src="assets/img/play.svg" />
+                    <pre id="editor-cycle-3" spellcheck="false" contenteditable="true" class="config-box"></pre>
+                    <pre class="editor-box"><code tabindex="7" id="edit3" spellcheck="false" contenteditable="true" class="language-tidal"></code></pre>
+                </div>
+            </div>
+        </div>
+        <div id="feedback-container">
+
+        </div>
+
     </div>
 
-    <div id="editor-wrapper">
-        <div class="row">
-            <img id="play-1" role="button" onclick="startFrom(1)" class="play-box" src="assets/img/play.svg" />
-            <pre id="editor-cycle-1" spellcheck="false" contenteditable="true" class="config-box"></pre>
-            <pre class="editor-box"><code tabindex="5" id="edit1" spellcheck="false" contenteditable="true" class="language-tidal"></code></pre>
-
-        </div>
-        <div class="row">
-            <img id="play-2" role="button" onclick="startFrom(2)" class="play-box" src="assets/img/play.svg" />
-            <pre id="editor-cycle-2" spellcheck="false" contenteditable="true" class="config-box"></pre>
-            <pre class="editor-box"><code tabindex="6" id="edit2" spellcheck="false" contenteditable="true" class="language-tidal"></code></pre>
-        </div>
-
-        <div class="row">
-            <img id="play-3" role="button" onclick="startFrom(3)" class="play-box" src="assets/img/play.svg" />
-            <pre id="editor-cycle-3" spellcheck="false" contenteditable="true" class="config-box"></pre>
-            <pre class="editor-box"><code tabindex="7" id="edit3" spellcheck="false" contenteditable="true" class="language-tidal"></code></pre>
-        </div>
-    </div>
 </div>
 
  <script src="assets/js/file.js"></script>
- <script src="assets/js/sequencer.js"></script>
  <script src="assets/js/browser.js"></script>
+ <script src="assets/js/sequencer.js"></script>
 
 </body>
 

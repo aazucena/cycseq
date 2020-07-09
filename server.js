@@ -3,7 +3,6 @@ require('coffee-script');
 var http = require('http');
 var express = require('express');
 var nopt = require('nopt');
-// var zmq = require('zmq');
 var WebSocket = require('ws');
 var osc = require('osc');
 
@@ -57,25 +56,8 @@ var expressServer = express();
 expressServer.use(express.static(__dirname));
 httpServer.on('request',expressServer);
 
-// var stdin = process.openStdin();
-// stdin.addListener("data", function (d) { pub.send(d); });
-
-var options = {
-  db: {type: 'none'},
-  browserChannel: {cors: '*'},
-  auth: function(client, action) {
-    // This auth handler rejects any ops bound for docs starting with 'readonly'.
-    if (action.name === 'submit op' && action.docName.match(/^readonly/)) {
-      action.reject();
-    } else {
-      action.accept();
-    }
-  }
-};
-
 var wss = new WebSocket.Server({server: httpServer});
 wss.broadcast = function(data) {
-  //stderr.write("extramuros: broadcast to " + wss.clients.size + " clients\n");
   for (let i of wss.clients) i.send(data);
 };
 
@@ -125,7 +107,7 @@ wss.on('connection',function(ws) {
     }
 	if(n.request === "eval") {
         sendOSCTriggerMessage(n.bufferName);
-        evaluateBuffer(n.bufferName);
+        //evaluateBuffer(n.bufferName);
 	}
     if(n.request === "evalCode") {
         sendOSCTriggerMessage(n.bufferName);
@@ -135,11 +117,14 @@ wss.on('connection',function(ws) {
         evaluateJavaScriptGlobally(n.code);
 	}
 	if(n.request === "oscFromClient") {
-		forwardOscFromClient(n.address,n.args);
+        forwardOscFromClient(n.address,n.args);
 	}
 	if(n.request === "feedback") {
 		forwardFeedbackFromClient(n.text);
 	}
+	if(n.request === "ableton") {
+        sendAbletonCommand(n.command);
+    }
     });
     ws.on("close",function() {
 	console.log("");
@@ -150,10 +135,10 @@ wss.on('connection',function(ws) {
 if(udp!=null)udp.open();
 
 function evaluateCode(name, code) {
-    var t = code.replace(/--.*\n/g, "\n").replace(/\t/g, "").replace(/\n\]/g, "]");;
+    var t = code.replace(/--.*\n/g, "\n").replace(/\t/g, "").replace(/\n\]/g, "]");
     var n = { type: 'eval', code: t };
     try { wss.broadcast(JSON.stringify(n)); }
-    catch (e) { stderr.write("warning: exception in WebSocket broadcast\n"); }
+    catch (e) { stderr.write("ƒwarning: exception in WebSocket broadcast\n"); }
     console.log(JSON.stringify(n));
 }
 
@@ -171,21 +156,19 @@ function sendOSCTriggerMessage(name) {
 
         udp.send(msg, "127.0.0.1", oscSendPort);
 
-        console.log("An OSC message just send!", msg);
+        //console.log("An OSC message just send!", msg);
     }
 }
 
-function evaluateBuffer(name) {
-    console.log(name);
-  /*sharejs.client.open(name,'text','http://127.0.0.1:' + wsPort + '/channel', function (err,doc) {
-    //var t = doc.getText().replace(/--.*\n/g, "").replace(/\r?\n|\r/g, "").replace(/\t/g, "");
-    var t = doc.getText().replace(/--.*\n/g, "\n").replace(/\t/g, "").replace(/\n\]/g, "]");
-    var n = { type: 'eval', code: t };
-    try { wss.broadcast(JSON.stringify(n)); }
-    catch (e) { stderr.write("warning: exception in WebSocket broadcast\n"); }
-    console.log(JSON.stringify(n));
-    // pub.send(doc.getText());
-  });*/
+function sendAbletonCommand(command) {
+    if(oscSendPort != null) {
+        let msg = {
+            address: "/ableton/" + command,
+            args: [{type: "i", value: "1"}]
+        };
+
+        udp.send(msg, "127.0.0.1", oscSendPort);
+    }
 }
 
 function evaluateJavaScriptGlobally(code) {
