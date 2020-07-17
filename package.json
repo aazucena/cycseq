@@ -1,6 +1,6 @@
 {
-	"name": "extramuros",
-	"version": "0.0.3",
+	"name": "cycseq",
+	"version": "0.1.0",
 	"scripts": {
 		"start": "concurrently --default-input-target 1 -i --kill-others -n \"server,client,link\" \"npm run start:server\" \"npm run start:client -f\" \"npm run start:linkserver\"",
 		"start:server": "node server.js --password p -o 57121 -s 57120",

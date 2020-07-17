@@ -1,102 +1,63 @@
-extramuros - language-neutral shared-buffer networked live coding system
-==========
+# cycseq - cycle sequencer for tidal 
 
 See install-osx.md, install-win.md or install-linux.md for installation instructions.  See this document for usage.
 
-The big picture: This is software for collaborative live coding.  On one machine, you run an extramuros "server".  Then, from as many machines as you like, you use a web browser to connect to the server and code into shared text buffers.  Finally, and again from as many machines as you like, your run the extramuros "client" code in order to receive code from the server and pipe it to the language interpreter of your choice (SuperCollider, Tidal, etc).  Think of the "client" code as a way for machines to listen in on a public stream of code.
+This software represents a sequencer (similar to a step sequencer) for [TidalCycles](http://pages.tidalcycles.org/getting_started.html). With this sequencer it is possible to activate written code automatically.
 
-The connections between the web browsers, the server, and the client are structured to make it easier to do collaborative live coding across various firewalls, institutional networks, etc.  Both the web browser and the client are making "outbound" TCP connections to the server.  So long as the server is generally reachable you don't have to worry about the web browsers and clients being firewalled.  (Moreover: This type of collaborative live coding is also robust to bandwidth challenges as it generally just involves sending small bits of text back and forth.)   
+![](./assets/img/demo1.gif)
 
-To launch a server (only one person in a collaborative performance group needs to do this) - and assuming extramuros has been cloned/downloaded to your user folder:
+Once everything is installed, the client, server and an ableton link connenction must be started for the application.
+To start everything at once you can simply run the following command:
+
 ```
-cd ~/extramuros
-node server.js --password insertFunnyPasswordHere
+cd ~/cycseq
+node start
 ```
 
-To verify that the server is running, point your browser to the IP address of the server and port 8000.  If the server is not running on your local machine, replace 127.0.0.1 with the actual address of the server in the following (and in all subsequent examples):
+For TidalCycles to run synchronously, it is necessary to start the [carabiner](https://github.com/Deep-Symmetry/carabiner) software before.
+This is necessary for the link synchronization to work (see for further information: https://tidalcycles.org/index.php/Link_synchronisation).
+
+The connection to carabiner is established automatically when the application is started, if carabiner has been started before, because the connection has been stored in the startup script (see .ghciNoVisual).
+
+To verify that everything is running, point your browser to your local IP address and port 8000.
+
 ```
 http://127.0.0.1:8000
 ```
 
-To launch a test client just to verify that you can listen in on the code as people click "eval" in the browser.  (note: If you already have a server in one terminal window it is convenient to launch the client in a second terminal window):
-```
-cd ~/extramuros
-node client.js --server 127.0.0.1
-```
+In the upper left corner there should then be displayed "1 Link" (the carabiner connection was established). 
 
-To test, enter some code into the text buffers in the web browser, make sure you have entered the funny password you chose (forgetting to enter the password in the browser window is a common mistake) and click "eval".  If everything is working, you should see the code from the browser appear in the terminal where you launched node client.js.  By the way, you can terminate the client (or server) by pressing Ctrl-C twice in the relevant terminal window.
-
-If that test worked, you're ready to launch a client piped into a language interpreter.  Here's a slightly abstract example of what that would look like:
-```
-cd ~/extramuros
-node client.js --server 127.0.0.1 | pathToYourFavouriteInterpreter
-```
-
-For SuperCollider, one strategy is to pipe the text to sclang.  This is an example using a default SC installation on OSX (and assuming extramuros has been cloned into your user folder).  We use the --newlines-to-spaces option so that line breaks in the browser will become spaces in the code sent to SuperCollider, allowing you to stretch expressions over multiple lines.  Note that you won't have cmd-period to interrupt your SC synths, so it's helpful to have other ways of stopping/freeing things:
-```
-cd /Applications/SuperCollider/SuperCollider.app/Contents/Resources/
-node ~/extramuros/client.js --server 127.0.0.1 --newlines-to-spaces | ./sclang
-```
-
-You can also use short options, in which case the last line of the preceding example would be as follows:
-```
-node ~/extramuros/client.js -s 127.0.0.1 -n | ./sclang
-```
-
-You can send arbitrary OSC messages to the client and they will arrive at all browsers as calls to JavaScript functions with the same name as the OSC address (i.e. "/amp 0.5" becomes the call amp(0.5);). To activate this function on the client use the osc-port option AND specify the password (anything that sends things to the server needs a password!):
-```
-cd ~/extramuros
-node client.js --server 127.0.0.1 --osc-port 8000 --password yourFunnyPasswordHere| ./sclang
-```
-
-Another command-line option launches Tidal as a sub-process of the client.  Note that the extramuros distribution includes a file .ghci which helps establish a useful working environment for Tidal, and that because of this you should probably be in the extramuros folder when you start the client for Tidal. There are two main options for starting tidal - --tidal if you installed Tidal with stack, --tidalCabal if you installed Tidal with cabal:
-```
-cd ~/extramuros
-node client.js --server 127.0.0.1 --tidal
-```
+If this is not the case (e.g. because the carabiner was started later), then TidalCycles can be connected to the carabiner manually:
 
 ```
-cd ~/extramuros
-node client.js --server 127.0.0.1 --tidalCabal
+sock <- carabiner tidal 4 (-0.14)
 ```
 
-In addition to being more convenient than the command-line pipes used above with SuperCollider, this option also allows for feedback from a client to reach the server and thus be displayed in the browser windows:
+At this point you can test once if the written code can be evaluated. To do so, you can enter TidalCycles code in any of the large text fields and send it to SuperCollider by pressing Shift+Enter.
+
+There are a number of keyboard shortcuts:
+- Shift+Enter: evaluate code through the server (the textfield will repeat infinitely)
+- Alt+Enter: If a textfield has a focus, the new element is created behind it. Otherwise, it is added to the end of the text fields
+- Alt+Delete: Deletes a focused textfield
+
+Since SuperCollider version 3.10.4 there is now Ableton Link Support. This can be used to change the clock of CycSeq and TidalCycles simultaneously.
+
+To create a link connection with SuperCollider you can simply evaluate (with Shift+Enter in SuperCollider)
+```l = LinkClock(1).latency_(Server.default.latency);``` 
+And to set the tempo for everything you can use ```l.tempo = 90/60```
+
+To make sure that the code is always triggered immediately and nothing is "swallowed", use [trigger 1](https://tidalcycles.org/index.php/trigger), i.e.
+
 ```
-cd ~/extramuros
-node client.js --server 127.0.0.1 --tidal --feedback
+d1 $ trigger 1 $ s "bd(3,8)"
 ```
 
-To really get cooking with extramuros and Tidal, activate the osc-port option as well.  You'll have feedback from the ghci/Tidal interpreter AND the browser will receive JavaScript function calls when Tidal notes/events happen:
-```
-cd ~/extramuros
-node client.js --server 127.0.0.1 --tidal --feedback --osc-port 8000 --password yourFunnyPassword
-```
+If there is no value by "Cycle", then the current evaluated code is repeated infinitely.
+Each play button triggers the sequencer. The play button in the header starts the sequencer at the first text field. 
+So it is possible to start the sequencer from any text field.
 
-Now in the web browser, enter some code, make sure you have entered the correct password, and click "eval".  Not only should you see the evaluated code in the terminal - hopefully you will also hear it's effect!  
+## Notes
 
-There are a number of keyboard short cuts:
-- Shift-Enter: evaluate code through the server (i.e. Tidal or SuperCollider code)
-- Ctrl-Shift-Enter: evaluate JavaScript code on all browsers
-- Ctrl-Enter: evaluate JavaScript code on only this browser
-- Ctrl-Shift-C: clear the JavaScript canvas on all browsers
-- Alt-C: clear the JavaScript canvas on this browser only
-- Ctrl-Shift-R: restart animation if it has crashed, on all browsers
-- Alt-R: restart animation it it has crashed, on this browser only
-
-For more information about JavaScript visuals/animation in extramuros, see the document visualizationexamples.md.
-
-All of this is rough, unfriendly and probably even mistaken in some cases. So let's all help make it better!...
-
--d0kt0r0 (aka David Ogborn)
-
-PS: thanks to the following people for contributing to extramuros in various ways (additions, fixes, testing, championing, etc): Holger Ballweg, Alexandra Cárdenas, Ian Jarvis, Alex McLean, Ashley Sagar, Eldad Tsabary, Scott Wilson and anyone else who should be named here (submit a pull request...)
-
-## OSC editor control
-
-In this fork it is possible to switch between editors with OSC messages. In the index.html three editors are combined to one group and there are four different channel groups. 
-A list of possible OSC messages can be found in the following table.
-
-OSC address | Values | Description
--------- | -------- | --------
-/extramuros/editor/{number}   | Integer value between 1 - 12   | Activates a single editor
-/extramuros/channels/position/{number}   | Integer value between 1 - 3xt   | Activates all editors of all channels to the given position 
+- This software is based on the extramuros project, but has a different primary goal. This software is not (currently) suitable for collaborative writing, but maybe it should be.
+- This software is a kind of prototype without regard to testing, architecture or clean code.
+- You can save and load your content. It will be saved in a custom json.file and automoatically download by pressing the save button.

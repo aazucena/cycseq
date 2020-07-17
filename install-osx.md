@@ -5,14 +5,14 @@ extramuros installation instructions (Mac OS X)
 2. Download the extramuros folder and place it somewhere conveniently accessible from your terminal (code below places it in your home folder ~):
 ```
 cd ~
-git clone https://github.com/d0kt0r0/extramuros.git
+git clone https://github.com/thgrund/cycseq
 ```
 
 If you haven't used git before on the machine you may be prompted to install developer tools / agree to the Xcode license agreement, etc. If you follow those prompts/instructions, you'll then be able to do the instructions above and have them work.
 
-3. Use npm (node package manager, installed with node) to install the node packages required by extramuros:
+3. Use npm (node package manager, installed with node) to install the node packages required by cycseq:
 ```
-cd extramuros
+cd cycseq
 npm install
 ```
 
