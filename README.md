@@ -6,7 +6,7 @@ This software represents a sequencer (similar to a step sequencer) for [TidalCyc
 
 ![](./assets/img/demo1.gif)
 
-Once everything is installed, the client, server and an ableton link connenction must be started for the application.
+Once everything is installed and TidalCycles is running, the client, server and an ableton link connenction must be started for the application.
 To start everything at once you can simply run the following command:
 
 ```
