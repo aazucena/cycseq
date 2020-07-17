@@ -56,6 +56,28 @@ If there is no value by "Cycle", then the current evaluated code is repeated inf
 Each play button triggers the sequencer. The play button in the header starts the sequencer at the first text field. 
 So it is possible to start the sequencer from any text field.
 
+## Custom OSC messages
+
+The sequencer sends custom osc messages, which are evaluated and could be forwarded via SuperCollider. 
+For example, you can convert them to MIDI and then forward them to a DAW like Ableton to control start, stop and record. 
+Each osc message has the type int and the value 1.
+
+The messages are: 
+
+- /ableton/play : is sent after the play (triangle) button is pressed
+- /ableton/stop : is sent after the stop (square) button is pressed
+- /ableton/record : is sent after the record (circle) button is pressed
+
+In SuperCollider such a forwarding could look like the following:
+```
+	MIDIClient.init;
+	~midiOut = MIDIOut(0); //Depends on your device, this should be a midi loop from your os
+
+	OSCFunc.newMatching({|msg, time, addr, recvPort| ~midiOut.control(0, ctlNum: 100, val: 65)}, '/ableton/play', n);
+	OSCFunc.newMatching({|msg, time, addr, recvPort| ~midiOut.control(0, ctlNum: 101, val: 65)}, '/ableton/stop',n);
+	OSCFunc.newMatching({|msg, time, addr, recvPort| ~midiOut.control(0, ctlNum: 102, val: 65)}, '/ableton/record',n);
+```
+
 ## Notes
 
 - This software is based on the extramuros project, but has a different primary goal. This software is not (currently) suitable for collaborative writing, but maybe it should be.
