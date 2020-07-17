@@ -70,12 +70,12 @@ The messages are:
 
 In SuperCollider such a forwarding could look like the following:
 ```
-	MIDIClient.init;
-	~midiOut = MIDIOut(0); //Depends on your device, this should be a midi loop from your os
+MIDIClient.init;
+~midiOut = MIDIOut(0); //Depends on your device, this should be a midi loop from your os
 
-	OSCFunc.newMatching({|msg, time, addr, recvPort| ~midiOut.control(0, ctlNum: 100, val: 65)}, '/ableton/play', n);
-	OSCFunc.newMatching({|msg, time, addr, recvPort| ~midiOut.control(0, ctlNum: 101, val: 65)}, '/ableton/stop',n);
-	OSCFunc.newMatching({|msg, time, addr, recvPort| ~midiOut.control(0, ctlNum: 102, val: 65)}, '/ableton/record',n);
+OSCFunc.newMatching({|msg, time, addr, recvPort| ~midiOut.control(0, ctlNum: 100, val: 65)}, '/ableton/play', n);
+OSCFunc.newMatching({|msg, time, addr, recvPort| ~midiOut.control(0, ctlNum: 101, val: 65)}, '/ableton/stop',n);
+OSCFunc.newMatching({|msg, time, addr, recvPort| ~midiOut.control(0, ctlNum: 102, val: 65)}, '/ableton/record',n);
 ```
 
 ## Notes
