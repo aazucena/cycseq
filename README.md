@@ -52,7 +52,7 @@ To make sure that the code is always triggered immediately and nothing is "swall
 d1 $ trigger 1 $ s "bd(3,8)"
 ```
 
-If there is no value by "Cycle", then the current evaluated code is repeated infinitely.
+If there is no value in the "Cycle" field in a row, then the current evaluated code is repeated infinitely.
 Each play button triggers the sequencer. The play button in the header starts the sequencer at the first text field. 
 So it is possible to start the sequencer from any text field.
 
@@ -60,7 +60,7 @@ So it is possible to start the sequencer from any text field.
 
 The sequencer sends custom osc messages, which are evaluated and could be forwarded via SuperCollider. 
 For example, you can convert them to MIDI and then forward them to a DAW like Ableton to control start, stop and record. 
-Each osc message has the type int and the value 1.
+Each osc message has the type int and sends the value 1.
 
 The messages are: 
 
@@ -82,4 +82,4 @@ OSCFunc.newMatching({|msg, time, addr, recvPort| ~midiOut.control(0, ctlNum: 102
 
 - This software is based on the extramuros project, but has a different primary goal. This software is not (currently) suitable for collaborative writing, but maybe it should be.
 - This software is a kind of prototype without regard to testing, architecture or clean code.
-- You can save and load your content. It will be saved in a custom json.file and automoatically download by pressing the save button.
+- You can save and load your content. It will be saved in a custom json.file and automoatically download by pressing the save button. There seems to be a bug with missing newlines when a saved file is loaded
