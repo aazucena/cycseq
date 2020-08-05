@@ -158,7 +158,7 @@ function newEditorElement(number, cycle, content) {
 	editorCode.setAttribute("tabindex", number + 4);
 	editorCode.setAttribute("spellcheck", "false");
 	editorCode.setAttribute("contenteditable", "true");
-	editorCode.innerText = content;
+	editorCode.innerHTML = content;
 	editorCode.classList.add("language-tidal");
 
 	editorPre.append(editorCode);
