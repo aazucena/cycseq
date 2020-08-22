@@ -28,7 +28,7 @@ var shortHands = {
 var parsed = nopt(knownOpts,shortHands,process.argv,2);
 
 if(parsed['help']!=null) {
-    stderr.write("extramuros server.js usage:\n");
+    stderr.write("cycseq server.js usage:\n");
     stderr.write(" --help (-h)               this help message\n");
     stderr.write(" --password [word] (-p)    password to authenticate messages to server (required)\n");
     stderr.write(" --ws-port (-w) [number]   TCP port for WebSocket connections to browsers and clients (default: 8000)\n");
@@ -38,7 +38,7 @@ if(parsed['help']!=null) {
 }
 
 if(process.argv.length<3) {
-    stderr.write("extramuros: use --help to display available options\n");
+    stderr.write("cycseq: use --help to display available options\n");
 }
 
 var wsPort = parsed['ws-port'];
@@ -68,14 +68,14 @@ if(oscReceivePort != null) {
         localAddress: "0.0.0.0",
         localPort: oscReceivePort
     });
-    stderr.write("extramuros: listening for OSC on UDP port " + oscReceivePort.toString()+"\n");
+    stderr.write("cycseq: listening for OSC on UDP port " + oscReceivePort.toString()+"\n");
 
     udp.on("message", function (oscMsg) {
         console.log("An OSC message just arrived!", oscMsg);
     });
 
     if(oscSendPort != null) {
-        stderr.write("extramuros: send osc messages on UDP port " + oscSendPort.toString() + "\n");
+        stderr.write("cycseq: send osc messages on UDP port " + oscSendPort.toString() + "\n");
     }
 }
 
@@ -102,7 +102,7 @@ wss.on('connection',function(ws) {
         catch(e) { stderr.write("warning: exception in WebSocket send\n"); }
     }
     if (n.request === "triggerEditorOSC") {
-        try {wss.broadcast(JSON.stringify({'type': "osc", 'address': "/extramuros/editor/" + n.bufferName.replace("edit", ""), 'arg': [1] }));}
+        try {wss.broadcast(JSON.stringify({'type': "osc", 'address': "/cycseq/editor/" + n.bufferName.replace("edit", ""), 'arg': [1] }));}
         catch(e) { stderr.write("warning: exception in WebSocket send\n"); }
     }
 	if(n.request === "eval") {
@@ -145,7 +145,7 @@ function evaluateCode(name, code) {
 function sendOSCTriggerMessage(name) {
     if(oscSendPort != null) {
         let msg = {
-            address: "/extramuros/editor/" + name.replace("edit", ""),
+            address: "/cycseq/editor/" + name.replace("edit", ""),
             args: [
                 {
                     type: "i",
@@ -194,7 +194,7 @@ expressServer.get('/?', function(req, res) {
   res.end();
 });
 httpServer.listen(wsPort);
-console.log("extramuros server, listening on TCP port " + wsPort + " (http/WebSockets)");
+console.log("cycseq server, listening on TCP port " + wsPort + " (http/WebSockets)");
 
-process.title = 'extramuros';
+process.title = 'cycseq';
 process.on('SIGINT',function() { pub.close(); });

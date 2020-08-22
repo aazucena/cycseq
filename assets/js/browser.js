@@ -20,10 +20,12 @@ function initiate() {
 		let data = JSON.parse(m.data);
 		console.log(data);
 		if(data.type === 'osc') {
-			var address = data.address.substring(1);
+			const address = data.address.substring(1);
 
+			if (address.startsWith("cycseq")) {
+				handleExternalControls(data, address);
 			// Tidal-specific double-mappings for incoming /play messages
-			if(address === "play") {
+			} else if(address === "play") {
 				data.args.name = data.args[1];
 				data.args.begin = data.args[3];
 				data.args.end = data.args[4];
@@ -51,6 +53,19 @@ function initiate() {
     };
 
     setupKeyboardHandlers();
+}
+
+function handleExternalControls(data, address) {
+	console.log(address);
+	if ( address === "cycseq/editor") {
+		startFrom(data.args[0]);
+	} else if (address === "cycseq/play") {
+		start();
+	}else if (address === "cycseq/stop") {
+		stop();
+	}else if (address === "cycseq/record") {
+		record();
+	}
 }
 
 function evaluateCode (name, code) {

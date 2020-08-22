@@ -56,7 +56,7 @@ If there is no value in the "Cycle" field in a row, then the current evaluated c
 Each play button triggers the sequencer. The play button in the header starts the sequencer at the first text field. 
 So it is possible to start the sequencer from any text field.
 
-## Custom OSC messages
+## Sent OSC messages
 
 The sequencer sends custom osc messages, which are evaluated and could be forwarded via SuperCollider. 
 For example, you can convert them to MIDI and then forward them to a DAW like Ableton to control start, stop and record. 
@@ -76,6 +76,47 @@ MIDIClient.init;
 OSCFunc.newMatching({|msg, time, addr, recvPort| ~midiOut.control(0, ctlNum: 100, val: 65)}, '/ableton/play', n);
 OSCFunc.newMatching({|msg, time, addr, recvPort| ~midiOut.control(0, ctlNum: 101, val: 65)}, '/ableton/stop',n);
 OSCFunc.newMatching({|msg, time, addr, recvPort| ~midiOut.control(0, ctlNum: 102, val: 65)}, '/ableton/record',n);
+```
+
+## Receiving OSC messages
+
+You can send OSC messages to cycseq to control the application.
+
+The messages that are listened to are:
+
+- /cycseq/editor : Starts the sequencer at the editor corresponding to the parameter.
+- /cycseq/play : Starts the sequencer from the first input field
+- /cycseq/stop : Immidiately stops the sequencer
+- /cycseq/record : Records the output in Ableton (see Sent OSC messages)
+
+By default CycSeq listens for OSC messages on port 57121, but if you want to control the application with MIDI, 
+a mapping from MIDI to OSC is necessary. 
+
+In SuperCollider you can listen to a MIDI device and then forward OSC messages.
+An example might look like this:
+```
+(
+var cycseqOSC = NetAddr("127.0.0.1", 57121);
+
+MIDIClient.init;
+MIDIIn.connect;  
+
+~control = { arg src, chan, num, val; 
+    // Listening for cc messages 28-34 and ignore the channels and values. 
+    // Adjust these to your needs.
+    if (num == 28, {cycseqOSC.sendMsg("/cycseq/editor", 1)});
+    if (num == 29, {cycseqOSC.sendMsg("/cycseq/editor", 2)});
+    if (num == 30, {cycseqOSC.sendMsg("/cycseq/editor", 3)});
+    if (num == 31, {cycseqOSC.sendMsg("/cycseq/editor", 4)});
+    if (num == 32, {cycseqOSC.sendMsg("/cycseq/play", true)});
+    if (num == 33, {cycseqOSC.sendMsg("/cycseq/stop", true)});
+    if (num == 34, {cycseqOSC.sendMsg("/cycseq/record", true)});
+};
+
+MIDIIn.addFuncTo(\control, ~control);
+
+)
+
 ```
 
 ## Notes

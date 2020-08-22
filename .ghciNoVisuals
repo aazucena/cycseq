@@ -56,4 +56,16 @@ let d16 = p 16
 
 sock <- carabiner tidal 4 (-0.14)
 
+n `nroot` x = x ** (1 / fromIntegral n)
+nrootFuncs p f = f (fmap (12 `nroot` 2 **) (p))
+speed' p = nrootFuncs p speed
+accelerate' p = nrootFuncs p accelerate
+psrate = pF "psrate"
+psrate' p = nrootFuncs p psrate
+dly p1 p2 = delaytime p1 # delayfeedback p2 # delay 1
+roundy p =  (fromIntegral . round) <$> p
+stepr n r1 r2 f = segment n $ range r1 r2 $ f
+stepr' n r1 r2 f = roundy $ stepr n r1 r2 f
+myarp sc r2 f = scale sc (stepr' 32 0 r2 f)
+
 :set prompt "tidal> "
