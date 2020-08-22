@@ -52,6 +52,8 @@ To make sure that the code is always triggered immediately and nothing is "swall
 d1 $ trigger 1 $ s "bd(3,8)"
 ```
 
+But this should only be necessary by hugh latency. Tge trigger should not be necessary when you have low latency.
+
 If there is no value in the "Cycle" field in a row, then the current evaluated code is repeated infinitely.
 Each play button triggers the sequencer. The play button in the header starts the sequencer at the first text field. 
 So it is possible to start the sequencer from any text field.
