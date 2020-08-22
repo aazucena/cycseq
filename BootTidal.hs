@@ -100,6 +100,8 @@ let setI = streamSetI tidal
     looper cc nr input= capply (cF 0 cc) (const $ slow 1 $ s "rloop" # lrec "<1 0>" # lnr nr # linput input) $ s "rloop" # lrec "0" # lnr nr
 :}
 
+sock <- carabiner tidal 4 (0) 
+
 :set prompt "tidal> "
 :set prompt-cont ""
 
