@@ -27,7 +27,7 @@ http://127.0.0.1:8000
 
 In the upper left corner there should then be displayed "1 Link" (the carabiner connection was established). 
 
-If this is not the case (e.g. because the carabiner was started later), then TidalCycles can be connected to the carabiner manually:
+If this is not the case (e.g. because the carabiner was started later), then TidalCycles can be connected to the carabiner manually (the last value - here zero - is the latency for adjustments if necessary):
 
 ```
 sock <- carabiner tidal 4 (0) 
