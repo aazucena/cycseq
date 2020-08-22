@@ -11,7 +11,7 @@ To start everything at once you can simply run the following command:
 
 ```
 cd ~/cycseq
-node start
+npm start
 ```
 
 For TidalCycles to run synchronously, it is necessary to start the [carabiner](https://github.com/Deep-Symmetry/carabiner) software before.
