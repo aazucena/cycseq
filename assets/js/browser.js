@@ -18,7 +18,6 @@ function initiate() {
     };
     sequencerWs.onmessage = function (m) {
 		let data = JSON.parse(m.data);
-		console.log(data);
 		if(data.type === 'osc') {
 			const address = data.address.substring(1);
 
@@ -56,7 +55,6 @@ function initiate() {
 }
 
 function handleExternalControls(data, address) {
-	console.log(address);
 	if ( address === "cycseq/editor") {
 		startFrom(data.args[0]);
 	} else if (address === "cycseq/play") {
