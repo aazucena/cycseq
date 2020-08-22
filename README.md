@@ -30,7 +30,7 @@ In the upper left corner there should then be displayed "1 Link" (the carabiner 
 If this is not the case (e.g. because the carabiner was started later), then TidalCycles can be connected to the carabiner manually:
 
 ```
-sock <- carabiner tidal 4 (-0.14)
+sock <- carabiner tidal 4 (0) 
 ```
 
 At this point you can test once if the written code can be evaluated. To do so, you can enter TidalCycles code in any of the large text fields and send it to SuperCollider by pressing Shift+Enter.
