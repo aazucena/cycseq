@@ -26,6 +26,7 @@ var knownOpts = {
     "tidalVisuals": Boolean,
     "tidalCabal": Boolean,
     "tidalCustom": [path],
+    "ghciPath": [String, null],
     "sonic-pi": Boolean,
     "newlines-as-spaces" : Boolean
 };
@@ -38,6 +39,7 @@ var shortHands = {
     "p" : ["--password"],
     "t" : ["--tidal"],
     "T" : ["--tidalCustom"],
+    "g" : ["--ghciPath"],	 
     "h" : ["--help"],
     "f" : ["--feedback"]
 };
@@ -54,6 +56,7 @@ if(parsed['help']!=null) {
     stderr.write(" --feedback (-f)             send feedback from stdin to server\n");
     stderr.write(" --tidal (-t)                launch Tidal (as installed by stack)\n");
     stderr.write(" --tidalCabal                launch Tidal (as installed by cabal)\n");
+    stderr.write(" --ghciPath                  path of your local ghci bin\n");
     stderr.write(" --sonic-pi                  for Sonic Pi (each evaluation handled by sonic-pi-tool)\n");
     stderr.write(" --newlines-as-spaces (-n)   converts any received newlines to spaces on stdout\n");
     process.exit(1);
@@ -90,6 +93,8 @@ var withTidal = parsed['tidal'];
 var withTidalCabal = parsed['tidalCabal'];
 var withTidalVisuals = parsed['tidalVisuals'];
 var withCustomTidalBoot = parsed['tidalCustom'];
+const withGhciPath = parsed['ghciPath'];
+
 if(withTidalCabal != null || withTidalVisuals != null || withCustomTidalBoot != null) withTidal = true;
 if(withCustomTidalBoot!=null) {                      // custom tidal boot file provided
   if(withTidalVisuals==true) {
@@ -113,7 +118,13 @@ var buf2 = '';
 function main (ws) {
 if(withTidal != null) {
 
-    if(withTidalCabal != null) tidal = spawn('ghci', ['-XOverloadedStrings']);
+    if(withTidalCabal != null) {
+        if (withGhciPath != null) {
+	    tidal = spawn(withGhciPath, ['-XOverloadedStrings']);
+	} else {
+	    tidal = spawn('ghci', ['-XOverloadedStrings']);
+	}
+    }
     else tidal = spawn('stack',['ghci','--ghci-options','-XOverloadedStrings']);
     tidal.on('close', function (code) {
       stderr.write('Tidal process exited with code ' + code + "\n");
