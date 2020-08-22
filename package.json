@@ -13,6 +13,7 @@
 		"coffee-script": "*",
 		"concurrently": "^5.2.0",
 		"express": "*",
+		"g": "^2.0.1",
 		"highlight-within-textarea": "^2.0.5",
 		"nan": "^2.14.1",
 		"nopt": "^4.0.3",

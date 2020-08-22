@@ -139,10 +139,8 @@ if(withTidal != null) {
         }
     });
 
-    var dotGhci;
-    if(withCustomTidalBoot != null) { dotGhci = withCustomTidalBoot; }
-    else if(withTidalVisuals == true) { dotGhci = ".ghciVisuals"; }
-    else { dotGhci = ".ghciNoVisuals"; }
+    const dotGhci = "BootTidal.hs";
+    
     fs.readFile(dotGhci,'utf8', function (err,data) {
       if (err) { console.log(err); return; }
       tidal.stdin.write(data);
