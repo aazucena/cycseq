@@ -58,7 +58,7 @@ If there is no value in the "Cycle" field in a row, then the current evaluated c
 Each play button triggers the sequencer. The play button in the header starts the sequencer at the first text field. 
 So it is possible to start the sequencer from any text field.
 
-## Sent OSC messages
+## Sending OSC messages
 
 The sequencer sends custom osc messages, which are evaluated and could be forwarded via SuperCollider. 
 For example, you can convert them to MIDI and then forward them to a DAW like Ableton to control start, stop and record. 
