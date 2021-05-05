@@ -103,8 +103,8 @@ function setupKeyboardHandlers(id) {
         } else if (event.ctrlKey && event.altKey && event.which == 72) {
             // CTRL + ALT + H: hushes the current editors
             event.preventDefault();
-            retriggerAnimation(event.currentTarget.id);
             evaluateCode("editorX", "hush");
+            alert("All the sounds are hushed");
         }
     });
 
