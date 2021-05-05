@@ -81,6 +81,9 @@ let setI = streamSetI tidal
     setB = streamSetB tidal
 :}
 
+
+-- All functions are from: https://club.tidalcycles.org/t/sharing-custom-functions/1032
+-- My functions are gate, fastgate, gateWith, fastgateWith, gater, rscale, pingpong, ipingpong, pingpongMod
 :{
     n `nroot` x = x ** (1 / fromIntegral n)
     nrootFuncs p f = f (fmap (12 `nroot` 2 **) (p))
