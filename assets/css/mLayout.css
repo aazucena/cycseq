@@ -2,34 +2,40 @@ div.row {
     display: flex;
 }
 
-div.row > pre {
-    float:left;
+div.row>pre {
+    float: left;
     border-bottom: 0;
     border-top: 0;
 }
 
-pre, code {
+pre,
+code {
     height: 100%;
     border-bottom: 0;
     display: table-cell;
 }
 
 #editor-wrapper {
-    width: 80%;
+    width: 100%;
     float: left;
 }
 
 #feedback-container {
-    width: 18%;
-    min-height: 300px;
-    float: left;
+    display: table-cell;
+    width: 30%;
     background: #2b2b2b;
     color: #A9B7C6;
-    margin-left: 6px;
-    padding: 8px;
     font-size: 16px;
+    margin-top: 2vh;
+    padding: 0 0.5rem;
+    overflow: hidden;
+}
+
+#editor-table {
+    display: table-cell;
 }
 
 #content-wrapper {
-    height: 100%;
+    display: table;
+    width: 100%;
 }

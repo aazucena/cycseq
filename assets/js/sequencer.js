@@ -10,7 +10,7 @@ let cycleCounter = 1;
 let editorNumber = 1;
 let trigger = 0;
 
-function abletonOSCMessage (command) {
+function abletonOSCMessage(command) {
     let msg = { request: "ableton", command: command };
     sequencerWs.send(JSON.stringify(msg));
 }
@@ -50,9 +50,18 @@ function startFrom(number) {
 function toggleRepeat(elem) {
     isRepeating = !isRepeating;
 
-    if (isRepeating) {elem.children[0].src = 'assets/img/repeat-orange.png'}
-    else {elem.children[0].src = 'assets/img/repeat.png'}
+    if (isRepeating) { elem.children[0].src = 'assets/img/repeat-orange.png' } else { elem.children[0].src = 'assets/img/repeat.png' }
 }
+
+//This function opens a help popup section
+$(".open").on("click", function() {
+    $(".help-overlay, .help-modal, .help-content").addClass("active");
+});
+
+//removes the "active" class to .popup and .popup-content when the "Close" button is clicked 
+$(".close").on("click", function() {
+    $(".help-overlay, .help-modal, .help-content").removeClass("active");
+});
 
 function stop() {
     removeActiveClass();
@@ -67,7 +76,7 @@ function stop() {
     recordBtn.src = 'assets/img/record.svg';
 }
 
-function removeActiveClass () {
+function removeActiveClass() {
     const editors = document.getElementsByTagName("code");
     for (let i = 0; i < editors.length; i++) {
         editors[i].classList.remove('active');
@@ -83,8 +92,7 @@ function next(number) {
         editorNumber = 1;
         const editor = document.getElementById(EDITOR_ID + editorNumber);
         activateEditor(editor, prevEditor)
-    }
-    else if (editor === null) {
+    } else if (editor === null) {
         stop();
     } else {
         activateEditor(editor, prevEditor)
@@ -110,16 +118,16 @@ function linkWS() {
     console.log("attempting websocket connection to " + url);
     let linkWS = new WebSocket(url);
 
-    linkWS.onopen = function () {
+    linkWS.onopen = function() {
         console.log("extramuros websocket connection opened");
     };
-    linkWS.onerror = function () {
+    linkWS.onerror = function() {
         console.log("ERROR opening extramuros websocket connection");
     };
-    linkWS.onmessage = function (m) {
+    linkWS.onmessage = function(m) {
         var data = JSON.parse(m.data);
 
-        if(data.type === 'linkInfos') {
+        if (data.type === 'linkInfos') {
             document.getElementById("tempo").innerText = Math.round(data.tempo);
 
             if (data.numPeers === 0 || data.numPeers === undefined) {
@@ -130,7 +138,7 @@ function linkWS() {
             }
         }
 
-        if(data.type === 'linkBeat') {
+        if (data.type === 'linkBeat') {
             const beat = data.phase;
             document.getElementById("phase").innerText = Math.trunc(data.phase) + 1 + "/4";
 
@@ -140,18 +148,18 @@ function linkWS() {
             }
 
             if (isStarted && beat > trigger && trigger > 0.0) {
-                    if (!isRunning) {
-                        next(editorNumber);
-                        isRunning = true
-                    } else {
-                        let editorCycles = parseInt(document.getElementById(EDITOR_CYCLE_ID + editorNumber).innerText, 10);
+                if (!isRunning) {
+                    next(editorNumber);
+                    isRunning = true
+                } else {
+                    let editorCycles = parseInt(document.getElementById(EDITOR_CYCLE_ID + editorNumber).innerText, 10);
 
-                        if (cycleCounter > editorCycles) {
-                            cycleCounter = 1;
-                            editorNumber++;
-                            next(editorNumber);
-                        }
+                    if (cycleCounter > editorCycles) {
+                        cycleCounter = 1;
+                        editorNumber++;
+                        next(editorNumber);
                     }
+                }
 
                 trigger = 0.0;
                 cycleCounter++;

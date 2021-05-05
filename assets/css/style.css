@@ -1,110 +1,136 @@
 body {
-  background: #3c3f41;
-  color: white;
-  font-family: monospace;
-  overflow-x: hidden;
+    background: #3c3f41;
+    color: white;
+    font-family: monospace;
+    overflow-x: hidden;
 }
+
 
 /*  Editor  */
 
-div.editor, textarea, pre {
-  background: #2b2b2b;
-  color: #A9B7C6;
-  width: 30%;
+div.editor,
+textarea,
+pre {
+    background: #2b2b2b;
+    color: #A9B7C6;
+    width: 30%;
 }
 
 pre {
-  min-height: 100%;
-  min-width: 100px;
-  background: #2B2B2B;
-  margin: 0;
-  transition: background-color 0.5s ease;
+    min-height: 100%;
+    min-width: 100px;
+    background: #2B2B2B;
+    margin: 0;
+    transition: background-color 0.5s ease;
 }
 
 code {
-  min-width: 200px;
+    min-width: 200px;
 }
 
 @-o-keyframes fadeIt {
-  0%   { background-color: #2b2b2b; }
-  50%  { background-color: #515151; }
-  100% { background-color: #2b2b2b; }
+    0% {
+        background-color: #2b2b2b;
+    }
+    50% {
+        background-color: #515151;
+    }
+    100% {
+        background-color: #2b2b2b;
+    }
 }
+
 @keyframes fadeIt {
-  0%   { background-color: #2b2b2b; }
-  50%  { background-color: #515151; }
-  100% { background-color: #2b2b2b; }
+    0% {
+        background-color: #2b2b2b;
+    }
+    50% {
+        background-color: #515151;
+    }
+    100% {
+        background-color: #2b2b2b;
+    }
 }
 
 @-moz-keyframes fadeIt {
-  0%   { background-color: #2b2b2b; }
-  50%  { background-color: #515151; }
-  100% { background-color: #2b2b2b; }
+    0% {
+        background-color: #2b2b2b;
+    }
+    50% {
+        background-color: #515151;
+    }
+    100% {
+        background-color: #2b2b2b;
+    }
 }
 
-.backgroundAnimated{
-  background-image:none !important;
-  -o-animation: fadeIt 0.5s ease-in-out;
-  -moz-animation: fadeIt 0.5s ease-in-out;
-  animation: fadeIt 0.5s ease-in-out;
-  transition: background-color 0.5s ease-in-out;
+.backgroundAnimated {
+    background-image: none !important;
+    -o-animation: fadeIt 0.5s ease-in-out;
+    -moz-animation: fadeIt 0.5s ease-in-out;
+    animation: fadeIt 0.5s ease-in-out;
+    transition: background-color 0.5s ease-in-out;
 }
 
 div.editor,
 textarea,
 code,
 pre {
-  -moz-tab-size : 4;
-  -o-tab-size : 4;
-  tab-size : 4;
-  float: left;
+    -moz-tab-size: 4;
+    -o-tab-size: 4;
+    tab-size: 4;
+    float: left;
 }
 
-code, pre {
-  display: inline-block;
+code,
+pre {
+    display: inline-block;
 }
 
 code:focus {
-  box-shadow: 0 0 0.2em #ffc800;
+    box-shadow: 0 0 0.2em #ffc800;
 }
 
 .active {
-  border: 1px solid #ffc800;
+    border: 1px solid #ffc800;
 }
 
 div.row {
-  width: 100%;
-  min-height: 22px;
-  margin-bottom: 0.4%;
+    width: 100%;
+    min-height: 22px;
+    margin-bottom: 0.4%;
 }
 
 div.header-row {
-  width: 80%;
-  display: flex;
-  min-height: 20px;
-  margin-bottom: 0.4%;
+    width: 100%;
+    display: flex;
+    min-height: fit-content;
+    margin-bottom: 0.4%;
 }
 
 div.header {
-  float: left;
-  width: 99%;
-
+    position: inline-block;
+    width: 100%;
+    align-items: center;
+    margin: 0.5vh 1vw;
 }
 
 div.float-left {
-  float: left;
+    position: relative;
+    left: 0;
 }
 
 div.float-right {
-  float: right;
+    position: relative;
+    right: 2%;
 }
-
 
 div.label {
-  float: left;
-  position:relative;
-  top:70px;
+    float: left;
+    position: relative;
+    top: 70px;
 }
+
 
 /*textarea.active, pre.active {
   box-shadow: 0 0 0.5em #ffc800;
@@ -112,75 +138,173 @@ div.label {
 }*/
 
 [contenteditable]:focus {
-  outline: 0px solid transparent;
+    outline: 0px solid transparent;
 }
 
 .text {
-  background: black;
-  color: white;
+    background: black;
+    color: white;
 }
 
 .evalButton {
-  background: darkGrey;
-  color: white;
+    background: darkGrey;
+    color: white;
 }
 
 #global {
-position: absolute;
-  padding-top: 20px;
-left: 0;
-top: 0;
-width: 100%;
-height: 100%;
-overflow: no-display;
+    position: absolute;
+    padding-top: 20px;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: no-display;
 }
 
 canvas {
-background: transparent;
-position: absolute; 
-left: 0;
-top: 0;
+    background: transparent;
+    position: absolute;
+    left: 0;
+    top: 0;
 }
 
-a.icon-link, img.icon-btns {
-  width: 24px;
-  height: 24px;
-  background-color: #2B2B2B;
+a.icon-link,
+img.icon-btns {
+    width: 24px;
+    height: 24px;
+    background-color: #2B2B2B;
 }
 
 div.float-left {
-  float: left;
+    float: left;
 }
 
 div.float-right {
-  float: right;
+    float: right;
 }
 
-div.header {
-  float: left;
-  width: 99%;
-  margin-bottom: 16px;
-  padding-left: 20px;
-  height: 22px;
-}
-
-hr {
-  border: 2px solid #777777;
-  background-color: #777777;
-  height: 1px;
-  float: left;
-  width: 100%;
-  margin: 0;
+.editborder {
+    border: 2px solid #777777;
+    background-color: #777777;
+    height: 1px;
+    float: left;
+    width: 100%;
+    margin: 0;
 }
 
 div.column {
-  float: left;
-  height: 100%;
+    float: left;
+    height: 100%;
 }
 
 div.cw-80 {
-  width: 80%;
+    width: 80%;
 }
+
 div.cw-20 {
-  width: 20%;
+    width: 20%;
+}
+
+
+/* Help popup styling*/
+
+.help-overlay {
+    visibility: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.60);
+}
+
+.help-overlay.active {
+    visibility: visible;
+}
+
+.help-modal {
+    /*Hides pop-up when there is no "active" class*/
+    visibility: hidden;
+    position: absolute;
+    display: flex;
+    margin: 3vh;
+    min-width: 70vw;
+    max-height: 75vh;
+    overflow-y: auto;
+    flex-direction: column;
+    align-items: center;
+    border: 1px solid #ccc;
+    border: 2px solid #777777;
+    background-color: #777777;
+    background-position: top center;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 4px;
+    outline: none;
+    padding: 5rem;
+    font-size: 1.25rem;
+}
+
+.help-modal.active {
+    visibility: visible;
+}
+
+.help-modal.active h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.pcenter {
+    text-align: center;
+}
+
+.pcenter {
+    padding-bottom: 2vh;
+}
+
+.help-content {
+    visibility: hidden;
+    padding: 2vh;
+}
+
+.help-content hr {
+    margin: 1rem;
+}
+
+.help-content ul li {
+    margin: 1rem;
+    line-height: 2.25rem;
+}
+
+.help-content.active {
+    visibility: visible;
+}
+
+.help-button {
+    display: inline-block;
+    position: initial;
+    vertical-align: middle;
+    border-radius: 5px;
+    padding: 1rem 2rem;
+    text-align: center;
+    left: 25vw;
+    margin: 1rem;
+    font-size: 1rem;
+    color: #666666;
+    background: #ffffff;
+    border: 1px solid #666666;
+    bottom: 0;
+}
+
+.help-button:hover {
+    border: 1px solid #666666;
+    background: #666666;
+    color: #ffffff;
+}
+
+kbd {
+    padding: 0.5rem;
+    margin: 0.125rem;
+    border: 2px solid white;
 }

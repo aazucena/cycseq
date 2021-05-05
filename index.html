@@ -1,101 +1,122 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
- <title>extramuros</title>
- <!--<script src="/socket.io/socket.io.js"></script>-->
-  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-  <script src="assets/js/caret.js" type="text/javascript"></script>
-  <script src="assets/js/prism.js" type="text/javascript"></script>
-  <script src="assets/js/p5.min.js"></script>
-  <script src="assets/js/p5.sound.min.js"></script>
-  <script src="node_modules/osc/dist/osc-browser.min.js"></script>
 
-  <link href="assets/css/prism.css" rel="stylesheet" type="text/css" />
-  <link rel="stylesheet" type="text/css" href="assets/css/style.css">
-  <link rel="stylesheet" type="text/css" href="assets/css/mLayout.css">
-  <link href="assets/css/link.css" rel="stylesheet" type="text/css" />
-  <link href="assets/css/slider.css" rel="stylesheet" type="text/css" />
+<head>
+    <title>CycSeq</title>
+    <!--<script src="/socket.io/socket.io.js"></script>-->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="assets/js/caret.js" type="text/javascript"></script>
+    <script src="assets/js/prism.js" type="text/javascript"></script>
+    <script src="assets/js/p5.min.js"></script>
+    <script src="assets/js/p5.sound.min.js"></script>
+    <script src="node_modules/osc/dist/osc-browser.min.js"></script>
+
+    <link href="assets/css/prism.css" rel="stylesheet" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/mLayout.css">
+    <link href="assets/css/link.css" rel="stylesheet" type="text/css" />
+    <link href="assets/css/slider.css" rel="stylesheet" type="text/css" />
 </head>
 
 <body onload="initiate()">
-<script type="text/javascript">
-    // Optional
-    Prism.plugins.NormalizeWhitespace.setDefaults({
-        'remove-trailing': false,
-        'remove-indent': true,
-        'left-trim': false,
-        'right-trim': false,
-    });
-</script>
-<div id="global">
+    <script type="text/javascript">
+        // Optional
+        Prism.plugins.NormalizeWhitespace.setDefaults({
+            'remove-trailing': false,
+            'remove-indent': true,
+            'left-trim': false,
+            'right-trim': false,
+        });
+    </script>
+    <div id="global">
 
-  <div class="header">
-      <div class="float-left">
-          <span id="peers" class="link-box" >Link</span>
-          <span class="space-5" ></span>
-          <span id="tempo" class="link-box" >120</span>
-          <span class="space-20" ></span>
-          <span id="phase" class="link-box" >1/4</span>
-          <span class="space-5" ></span>
-          <input type="number" value="4.8" step="0.1" min="1" max="4.9" class="header-input" id="cycles-trigger">
-          <span class="space-20" ></span>
-          <img id="play" role="button" onclick="start()" class="active-play icon-link" src="assets/img/play.svg" />
-          <img id="stop" role="button" onclick="stop()" class="icon-link" src="assets/img/stop.svg" />
-          <img id="record" role="button"  onclick="record()" class="active-record icon-link icon-smaller " src="assets/img/record.svg" />
-          <span class="space-20" ></span>
-          <div class="slidecontainer">
-              <input type="range" min="24" max="200" value="100" class="slider" id="width-range">
-          </div>
-          <span class="space-20" ></span>
-          <span id="repeat-button" class="link-box icon-button" onclick="toggleRepeat(this)">
-              <img id="repeat" src="assets/img/repeat.png" /></span>
-          <span class="space-20" ></span>
-      </div>
-      <div class="float-right">
-           <input type="file" name="ins" id="files" class="text" value="Upload"/>
-        <input type="text" name="filename" length="32" id="filename" class="text" value="tidal"/>
-        <input type="button" name="ins" id="ins" class="text" onclick="save()" value="Save"/>
-      </div>
-  </div>
- <hr/>
-    <div id="content-wrapper">
-        <div id="editor-table">
-            <div class="header-row">
-                <pre spellcheck="false" class="header-box play-box"></pre>
-                <pre spellcheck="false" class="config-box header-box">Cycle</pre>
-                <pre spellcheck="false" class="config-box header-box" style="width: 100%">Editor</pre>
+        <div class="header">
+            <div class="float-left">
+                <span id="peers" title="Peers/Links" class="link-box">Link</span>
+                <span class="space-5"></span>
+                <span id="tempo" title="Tempo(BPM)" class="link-box">120</span>
+                <span class="space-20"></span>
+                <span id="phase" title="Timer/Metronome" class="link-box">1/4</span>
+                <span class="space-5"></span>
+                <input type="number" title="Latency" value="4.8" step="0.1" min="1" max="4.9" class="header-input" id="cycles-trigger">
+                <span class="space-20"></span>
+
+                <div class="player">
+                    <img id="play" title="Play All" role="button" onclick="start()" class="active-play icon-link" src="assets/img/play.svg" />
+                    <img id="stop" title="Stop" role="button" onclick="stop()" class="icon-link" src="assets/img/stop.svg" />
+                    <img id="record" title="Record" role="button" onclick="record()" class="active-record icon-link icon-smaller " src="assets/img/record.svg" />
+                </div>
+
+                <span class="space-20"></span>
+                <div class="slidecontainer">
+                    <input type="range" min="24" max="200" value="100" class="slider" id="width-range">
+                </div>
+                <span class="space-20"></span>
+                <span id="repeat-button" title="Repeat/Loop" class="link-box icon-button" onclick="toggleRepeat(this)">
+                        <img id="repeat" title="Repeat/Loop" src="assets/img/repeat.png" /></span>
+                <span class="space-20"></span>
+                <span id="help-button" title="Help" class="link-box icon-button open" onclick="">
+                        <img id="help" title="Help" class="open" src="assets/img/help.png" /></span>
+                <span class="space-20"></span>
             </div>
-            <div id="editor-wrapper">
-                <div class="row">
-                    <img id="play-1" role="button" onclick="startFrom(1)" class="play-box" src="assets/img/play.svg" />
-                    <pre id="editor-cycle-1" spellcheck="false" contenteditable="true" class="config-box"></pre>
-                    <pre class="editor-box"><code tabindex="5" id="edit1" spellcheck="false" contenteditable="true" class="language-tidal"></code></pre>
-
-                </div>
-                <div class="row">
-                    <img id="play-2" role="button" onclick="startFrom(2)" class="play-box" src="assets/img/play.svg" />
-                    <pre id="editor-cycle-2" spellcheck="false" contenteditable="true" class="config-box"></pre>
-                    <pre class="editor-box"><code tabindex="6" id="edit2" spellcheck="false" contenteditable="true" class="language-tidal"></code></pre>
-                </div>
-
-                <div class="row">
-                    <img id="play-3" role="button" onclick="startFrom(3)" class="play-box" src="assets/img/play.svg" />
-                    <pre id="editor-cycle-3" spellcheck="false" contenteditable="true" class="config-box"></pre>
-                    <pre class="editor-box"><code tabindex="7" id="edit3" spellcheck="false" contenteditable="true" class="language-tidal"></code></pre>
-                </div>
+            <div class="float-right">
+                <input type="file" name="ins" id="files" class="text" value="Upload" />
+                <input type="text" name="filename" length="32" id="filename" class="text" value="tidal" />
+                <input type="button" name="ins" id="ins" class="text" onclick="save()" value="Save" />
             </div>
         </div>
-        <div id="feedback-container">
-
+        <hr class="editborder" />
+        <div id="content-wrapper">
+            <div id="editor-table">
+                <div class="header-row">
+                    <pre spellcheck="false" class="header-box play-box"></pre>
+                    <pre spellcheck="false" class="config-box header-box">Cycle</pre>
+                    <pre spellcheck="false" class="config-box header-box" style="width: 100%">Editor</pre>
+                </div>
+                <div id="editor-wrapper">
+                </div>
+                <div id="controls">
+                    <span id="minus-button" title="Remove Last Editor" class="link-box icon-button" onclick="removeLastEditor()">
+                        <img id="minus" title="Remove Last Editor" src="assets/img/minus.png" />
+                    </span>
+                    <span id="add-button" title="Add Editor" class="link-box icon-button" onclick='newEditor("", "")'>
+                        <img id="add" title="Add Editor" src="assets/img/add.png" />
+                    </span>
+                </div>
+            </div>
+            <div id="feedback-container"> </div>
         </div>
-
     </div>
 
-</div>
+    <!--Help popup section-->
+    <div class="help-overlay">
+        <div class="help-modal">
+            <div class="help-content">
+                <h1><u>Help</u></h1>
+                <p class="pcenter"> This is where you can check for Keyboard Shortcuts and the Developer Notes</p>
+                <hr>
+                <h2>Keyboard Shortcuts</h2>
+                <ul>
+                    <li><kbd>Shift</kbd> + <kbd>Enter</kbd>: evaluate code through the server (the textfield will repeat infinitely)</li>
+                    <li><kbd>Alt</kbd> + <kbd>Enter</kbd>: If a textfield has a focus, the new element is created behind it. Otherwise, it is added to the end of the text fields</li>
+                    <li><kbd>Alt</kbd> + <kbd>Delete</kbd>: Deletes a focused textfield</li>
+                    <li><kbd>Ctrl</kbd> + <kbd>Alt</kbd> + <kbd>H</kbd>: Hush all the editors</li>
+                </ul>
+                <hr>
+                <h2>Developer Notes</h2>
+                <ul>
+                    <li>This software is based on the extramuros project, but has a different primary goal. This software is not (currently) suitable for collaborative writing, but maybe it should be.</li>
+                    <li>This software is a kind of prototype without regard to testing, architecture or clean code.</li>
+                    <li>You can save and load your content. It will be saved in a custom json.file and automoatically download by pressing the save button. There seems to be a bug with missing newlines when a saved file is loaded</li>
+                </ul>
+            </div>
+            <button class="help-button close text">Close</button>
+        </div>
+    </div>
 
- <script src="assets/js/file.js"></script>
- <script src="assets/js/sequencer.js"></script>
- <script src="assets/js/browser.js"></script>
+    <script src="assets/js/file.js"></script>
+    <script src="assets/js/sequencer.js"></script>
+    <script src="assets/js/browser.js"></script>
 
 </body>
 
