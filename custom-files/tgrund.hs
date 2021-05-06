@@ -1,0 +1,16 @@
+let n `nroot` x = x ** (1 / fromIntegral n)
+    nrootFuncs p f = f (fmap (12 `nroot` 2 **) (p))
+    speed' p = nrootFuncs p speed
+    accelerate' p = nrootFuncs p accelerate
+    psrate = pF "psrate"
+    psrate' p = nrootFuncs p psrate
+    dly p1 p2 = delaytime p1 # delayfeedback p2 # delay 1
+    roundy p =  (fromIntegral . round) <$> p
+    stepr n r1 r2 f = segment n $ range r1 r2 $ f
+    stepr' n r1 r2 f = roundy $ stepr n r1 r2 f
+    myarp sc r2 f = scale sc (stepr' 32 0 r2 f)
+    linput = pI "linput"
+    lrec = pI "lrec"
+    lnr = pI "lnr"
+    capply condpat effectpat = every (fmap (\x -> if x > 0 then 1 else 0) (discretise 1 condpat)) effectpat
+    looper cc nr input= capply (cF 0 cc) (const $ slow 1 $ s "rloop" # lrec "<1 0>" # lnr nr # linput input) $ s "rloop" # lrec "0" # lnr nr

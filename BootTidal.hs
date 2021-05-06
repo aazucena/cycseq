@@ -82,62 +82,19 @@ let setI = streamSetI tidal
 :}
 
 
--- All functions are from: https://club.tidalcycles.org/t/sharing-custom-functions/1032
+-- All functions & params are from: https://club.tidalcycles.org/t/sharing-custom-functions/1032 & https://github.com/ndr-brt/sc-adente
+-- PLus the looper inputs are provided in tgrund.hs
 -- My functions are gate, fastgate, gateWith, fastgateWith, gater, rscale, pingpong, ipingpong, pingpongMod
-:{
-    n `nroot` x = x ** (1 / fromIntegral n)
-    nrootFuncs p f = f (fmap (12 `nroot` 2 **) (p))
-    speed' p = nrootFuncs p speed
-    accelerate' p = nrootFuncs p accelerate
-    psrate = pF "psrate"
-    psrate' p = nrootFuncs p psrate
-    dly p1 p2 = delaytime p1 # delayfeedback p2 # delay 1
-    roundy p =  (fromIntegral . round) <$> p
-    stepr n r1 r2 f = segment n $ range r1 r2 $ f
-    stepr' n r1 r2 f = roundy $ stepr n r1 r2 f
-    myarp sc r2 f = scale sc (stepr' 32 0 r2 f)
-    linput = pI "linput"
-    lrec = pI "lrec"
-    lnr = pI "lnr"
-    capply condpat effectpat = every (fmap (\x -> if x > 0 then 1 else 0) (discretise 1 condpat)) effectpat
-    looper cc nr input= capply (cF 0 cc) (const $ slow 1 $ s "rloop" # lrec "<1 0>" # lnr nr # linput input) $ s "rloop" # lrec "0" # lnr nr
-    sinosc  min max frq = (fast frq $ range min max sine)   
-    triosc  min max frq = (fast frq $ range min max tri)
-    sqrosc  min max frq = (fast frq $ range min max square)
-    sawosc  min max frq = (fast frq $ range min max saw)
-    randosc min max = (range min max rand)
-    randscale sc n f = (|+ note (scale sc (irand n))) f
-    invnote n = 0-n 
-    invnote' axis x = (2*axis) - x
-    plyCato num amt = plyWith num (|* legato amt)
-    plyDown num amt = plyWith num (|* gain amt)
-    parabolamod = listToPat([x^2 | x<-[0.1,0.12..0.5]])
-    recparabola = listToPat([1/x^2 | x<-[0.1,0.12..0.5]])
-    linmod = listToPat([0.4*x+0.4 | x<-[0.1,0.12..0.4]])
-    sinemod = listToPat([sin(0.4*x+0.4) | x<-[0.1,0.12..0.4]])
-    cosmod = listToPat([cos(0.4*x+0.4) | x<-[0.1,0.12..0.4]])
-    downstairs = listToPat([x | x<-[1 ,1, 0.8 ,0.8 ,0.6, 0.6, 0.4, 0.4, 0.2, 0.2, 0, 0 ]])
-    odds y = listToPat([2*x+1 | x<-[1,2..y]]) -- odd numbers
-    evens y = listToPat([2*x | x<-[1,2..y]]) -- even numbers
-    -- rslice x p = slice x (segment (toTime <$> x) $ ((>>= irand) x)) $ p
-    -- rsplice x p = splice x (segment (toTime <$> x) $ ((>>= irand) x)) $ p
-    gate m n x p = slow m $ (# legato n) $ slice x (run x) $ p
-    fastgate m n x p = fast m $ (# legato n) $ slice x (run x) $ p
-    gateWith m n x f p = slow m $ (|* legato n) $ f $ slice x (run x) $ p
-    fastgateWith m n x f p = fast m $ (|* legato n) $ f $ slice x (run x) $ p
-    gater m n x p = fast m $ (# legato n) $ randslice x $ p
-    rscale = (choose ["minPent", "majPent", "ritusen", "egyptian", "kumai", "hirajoshi", "iwato", "chinese", "indian", "pelog", 
-                        "prometheus", "scriabin", "gong", "shang", "jiao", "zhi", "yu", "whole", "augmented", "augmented2", "hexMajor7", 
-                        "hexDorian", "hexPhrygian", "hexSus", "hexMajor6", "hexAeolian", "major", "ionian", "dorian", "phrygian",
-                        "lydian", "mixolydian", "aeolian", "minor", "locrian", "harmonicMinor", "harmonicMajor", "melodicMinor",
-                        "melodicMinorDesc", "melodicMajor", "bartok", "hindu", "todi", "purvi", "marva", "bhairav", "ahirbhairav", 
-                        "superLocrian", "romanianMinor", "hungarianMinor", "neapolitanMinor", "enigmatic", "spanish", 
-                        "leadingWhole", "lydianMinor", "neapolitanMajor", "locrianMajor", "diminished", "diminished2", "chromatic"
-                        ])
-    pingpong n = (# pan (range 0 1 $ fast n square))
-    ipingpong n = (# pan (range 1 0 $ fast n square))
-    pingpongMod x y n = (# pan (range x y $ fast n square))
-:}
+
+:script ./custom-files/functionsnparams.hs
+-- :script ./custom-files/tgrund.hs
+-- :script ./custom-files/shortcuts.hs
+-- :script ./custom-files/functions.hs
+-- :script ./custom-files/parameters.hs
+-- :script ./custom-files/vst.hs
+-- :script ./custom-files/olbosfunc.hs
+-- :script ./custom-files/olbosparam.hs
+
 
 sock <- carabiner tidal 4 (0) 
 
