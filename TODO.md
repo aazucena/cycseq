@@ -5,11 +5,11 @@
 3. Copy TidalCycles Code Snippets to Clipboard 	:hammer_and_wrench:
 4. On Refresh/Exit Event:
    - Ask to save file -> actually saves a file :construction:
-   - resetCycles and hush ✔️:heavy_check_mark:
+   - resetCycles and hush :heavy_check_mark:
 5. Import file as:
-   -  .tidal ✔️:heavy_check_mark:
+   -  .tidal :heavy_check_mark:
    -  .hs :construction:
-   -  .json ✔️:heavy_check_mark:
+   -  .json :heavy_check_mark:
 6. Optimize the Web Page :construction:
 7. Add Master Volume Slider :hammer_and_wrench:
 8. Optimize PrismJs for tidal language :hammer_and_wrench:
@@ -28,6 +28,7 @@
 16. Creating testing files for this Web App :construction:
 17. Try to make it work with MacOS and many Linux Distros :construction:
 18. Possibly make it go online with Github Pages?? :construction:
+<br>
 ***More to come***
 
 ### Legends:
