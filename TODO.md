@@ -25,8 +25,9 @@
 13. Adding Relevant Website settings :construction:
 14. Tidalcycles References (search function) :construction:
 15. Improve Ableton Link OSC :construction:
-16. Try to make it work with MacOS and many Linux Distros :construction:
-17. Possibly make it go online with Github Pages?? :construction:
+16. Creating testing files for this Web App :construction:
+17. Try to make it work with MacOS and many Linux Distros :construction:
+18. Possibly make it go online with Github Pages?? :construction:
 ***More to come***
 
 ### Legends:
