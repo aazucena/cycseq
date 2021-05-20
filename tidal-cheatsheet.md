@@ -194,3 +194,5 @@ Apply function to a pattern with different possibility
 * (stop a bit before playing new pattern) **wait** 2
 * (crossfade between old and new pattern over the next two cycles) **xfade** 1
 * (crossfade between old and new pattern over the next n cycles) **xfadeIn** 1  16
+
+Credit to: [Adente](https://github.com/ndr-brt/sc-adente)
