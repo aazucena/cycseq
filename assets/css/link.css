@@ -1,18 +1,19 @@
 .link-box {
     line-height: 4px;
-    padding: 2vh 0.5vw;
-    background-color: #777777;
+    padding: 1rem;
+    background-color: var(--component-bg-color);
     color: black;
     font-size: 1rem;
+    border-radius: .25rem!important;
 }
 
 .header-input {
     border: 0;
-    background-color: #777777;
-    font-family: monospace;
-    padding: 4px;
-    line-height: 16px;
+    padding: 0.25rem;
     font-size: 1rem;
+    background-color: var(--component-bg-color);
+    color: black;
+    border-radius: .25rem!important;
 }
 
 .header-input:focus {
@@ -41,18 +42,6 @@
     margin-left: 50px;
 }
 
-div.float-left {
-    display: flex;
-}
-
-.icon-link {
-    margin-left: 8px;
-}
-
-.icon-link:hover {
-    cursor: pointer;
-}
-
 .icon-smaller {
     width: 22px
 }
@@ -65,26 +54,37 @@ div.float-left {
 /*.active-play {
 }*/
 
-.config-box {
+.config-box,
+.cycle-box {
     border-bottom: 1px solid #262626;
-    border-right: 1px solid #777777;
+    border-right: 1px solid var(--component-bg-color);
     background-color: #252525;
-    width: 5%;
-    font-size: 16px;
+    width: 8.5%;
+    min-width: auto;
     height: auto;
+    font-size: 16px;
     text-align: center;
     vertical-align: baseline;
 }
 
+.cycle-box {
+    line-height: 4.5;
+}
+
 .play-box {
-    width: 2.5%;
     border-bottom: 1px solid #262626;
-    border-right: 1px solid #777777;
+    border-right: 1px solid var(--component-bg-color);
     background-color: #252525;
     min-width: auto;
     height: auto;
     transition: 0.2s ease;
     opacity: 1;
+    color: gray !important;
+}
+
+.edit-close {
+    width: 2.5%;
+    height: auto;
 }
 
 .play-box:hover {
@@ -93,21 +93,70 @@ div.float-left {
 }
 
 .header-box {
-    height: 20px;
+    margin: 1px;
     background-color: #1a1a1a;
-    ;
+    text-align: center;
 }
 
 .editor-box {
     height: auto;
+    min-width: auto;
+}
+
+#repeat {
+    font-size: 1.5rem;
+}
+
+#play,
+#stop,
+#record,
+#repeat {
+    transition: 0.125s ease-in;
+}
+
+#play:hover,
+#play:focus {
+    text-shadow: 0 0 0.15em rgba(50, 205, 50, 0.5);
+}
+
+#record:hover,
+#record:focus,
+#stop:hover,
+#stop:focus {
+    text-shadow: 0 0 0.15em rgba(255, 127, 127, 0.5);
+}
+
+#stop:focus,
+#stop:active {
+    color: #ff4040 !important;
+}
+
+.green {
+    color: rgb(50, 205, 50) !important;
+}
+
+.red {
+    color: rgb(255, 127, 127) !important;
+}
+
+.yellow {
+    color: yellow !important;
+}
+
+.gray {
+    color: gray !important;
+}
+
+.bi {
+    color: black;
+    font-weight: 900;
+    font-size: 1.5rem;
+    transition: 0.2s ease;
 }
 
 .icon-button {
-    line-height: 0;
-    padding: 0;
-    width: 2vw;
-    padding: 0.25vh 1vw;
-    overflow: hidden;
+    background-color: var(--component-bg-color) !important;
+    color: black !important;
 }
 
 .icon-button:hover {
@@ -119,16 +168,16 @@ div.float-left {
     margin: 0;
 }
 
+.s-code {
+    background-color: #272727;
+}
+
 #add-button,
 #minus-button {
-    width: 2vw;
     float: right;
-    padding: 0.5rem;
-    margin: 0 0.125rem;
 }
 
 .player {
-    background-color: #777777;
-    padding: 01vh 1vw;
-    padding-left: 0.5rem;
+    background-color: var(--component-bg-color);
+    padding: .375rem .75rem;
 }

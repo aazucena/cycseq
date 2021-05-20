@@ -22,58 +22,38 @@ function resetSequencer(number, started) {
     cycleCounter = 1;
 }
 
-function start() {
+$("#play").click(function() {
+    $(this).addClass("green");
     resetSequencer(1, true);
     abletonOSCMessage('play');
+});
 
-    let startBtn = document.getElementById("play");
-    startBtn.src = 'assets/img/play-green.png';
-}
-
-function record() {
+$("#record").click(function() {
+    $("#play").addClass("green");
+    $(this).addClass("red");
     resetSequencer(1, true);
     abletonOSCMessage('record');
+});
 
-    let startBtn = document.getElementById("play");
-    startBtn.src = 'assets/img/play-green.png';
+$("#repeat").click(function() {
+    isRepeating = !isRepeating;
+    $(this).toggleClass("yellow");
+});
 
-    let recordBtn = document.getElementById("record");
-    recordBtn.src = 'assets/img/record-red.svg';
-}
+$("#stop").click(function() {
+    $("#play").removeClass("green");
+    $("#record").removeClass("red");
+    removeActiveClass();
+    resetSequencer(1, false);
+    abletonOSCMessage('stop');
+    evaluateCode("editorX", "hush");
+    evaluateCode("editorX", "resetCycles");
+});
 
 function startFrom(number) {
     removeActiveClass();
     abletonOSCMessage('play');
     resetSequencer(number, true);
-}
-
-function toggleRepeat(elem) {
-    isRepeating = !isRepeating;
-
-    if (isRepeating) { elem.children[0].src = 'assets/img/repeat-orange.png' } else { elem.children[0].src = 'assets/img/repeat.png' }
-}
-
-//This function opens a help popup section
-$(".open").on("click", function() {
-    $(".help-overlay, .help-modal, .help-content").addClass("active");
-});
-
-//removes the "active" class to .popup and .popup-content when the "Close" button is clicked 
-$(".close").on("click", function() {
-    $(".help-overlay, .help-modal, .help-content").removeClass("active");
-});
-
-function stop() {
-    removeActiveClass();
-    resetSequencer(1, false);
-    abletonOSCMessage('stop');
-    evaluateCode("editorX", "hush");
-
-    let startBtn = document.getElementById("play");
-    startBtn.src = 'assets/img/play.svg';
-
-    let recordBtn = document.getElementById("record");
-    recordBtn.src = 'assets/img/record.svg';
 }
 
 function removeActiveClass() {

@@ -8,11 +8,9 @@
     -webkit-appearance: none;
     /* Override default CSS styles */
     appearance: none;
-    width: 100%;
+    width: 50%;
     /* Full-width */
     height: 19px;
-    /* Specified height */
-    background: #d3d3d3;
     /* Grey background */
     outline: none;
     /* Remove outline */
@@ -38,11 +36,9 @@
     -webkit-appearance: none;
     /* Override default look */
     appearance: none;
-    width: 25px;
-    /* Set a specific slider handle width */
-    height: 25px;
+    width: 5%;
     /* Slider handle height */
-    background: #777777;
+    background: var(--component-bg-color);
     /* Green background */
     cursor: pointer;
     /* Cursor on hover */

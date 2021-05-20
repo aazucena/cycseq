@@ -126,3 +126,8 @@ MIDIIn.addFuncTo(\control, ~control);
 - This software is based on the extramuros project, but has a different primary goal. This software is not (currently) suitable for collaborative writing, but maybe it should be.
 - This software is a kind of prototype without regard to testing, architecture or clean code.
 - You can save and load your content. It will be saved in a custom json.file and automoatically download by pressing the save button. There seems to be a bug with missing newlines when a saved file is loaded
+
+## aazucena's note:
+- Build sound preview features like Visual Studio Code extension for [TidalCycles](https://marketplace.visualstudio.com/items?itemName=tidalcycles.vscode-tidalcycles)
+- All the customs functions and effects collected for CycSeq's BootTidal are all credited within \custom-files\functionsnparams.hs
+- [My working Guidelines with this Project](TODO.md)

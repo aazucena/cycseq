@@ -1,7 +1,7 @@
-(function (root, factory) {
+(function(root, factory) {
     if (typeof define === 'function' && define.amd) {
         // AMD. Register as an anonymous module.
-        define(["jquery"], function ($) {
+        define(["jquery"], function($) {
             return (root.returnExportsGlobal = factory($));
         });
     } else if (typeof exports === 'object') {
@@ -12,9 +12,9 @@
     } else {
         factory(jQuery);
     }
-}(this, function ($) {
+}(this, function($) {
 
-//@ sourceMappingURL=jquery.caret.map
+    //@ sourceMappingURL=jquery.caret.map
     /*
       Implement Github like autocomplete mentions
       http://ichord.github.com/At.js

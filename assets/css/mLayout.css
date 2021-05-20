@@ -21,14 +21,13 @@ code {
 }
 
 #feedback-container {
-    display: table-cell;
-    width: 30%;
     background: #2b2b2b;
     color: #A9B7C6;
-    font-size: 16px;
-    margin-top: 2vh;
-    padding: 0 0.5rem;
-    overflow: hidden;
+    overflow: auto;
+}
+
+#feedback {
+    background: #2b2b2b;
 }
 
 #editor-table {

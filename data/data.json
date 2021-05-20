@@ -1,0 +1,46 @@
+{
+    "samples": [{
+        "index": 0,
+        "name": "test",
+        "file-location": ".\\path\\to\\folder",
+        "code": "once $ s \"test\"",
+        "total-files": 2
+    }],
+    "synths": [{
+        "index": 0,
+        "name": "testSynth",
+        "code": "once $ s \"testSynth\""
+    }],
+    "tutorials": [{
+            "index": 0,
+            "title": "sound",
+            "Author": "Tidalcycles Core",
+            "type": "Control Pattern Function",
+            "description": "Streams the sound of the given sample to Supercollider to 1 - 16 channels",
+            "code": [
+                "d1 $ sound \"bd\"",
+                "d1 $ s \"bd\""
+            ]
+        },
+        {
+            "index": 1,
+            "title": "n",
+            "Author": "Tidalcycles Core",
+            "type": "Control Pattern Function",
+            "description": "Changes a number pattern into a control pattern that changes the sample being played in the specified sound folder on disk. The default value is 0, which plays the first sample in the sound folder. A value of 1 plays the next sample in the folder, a value of 2 plays the next, and so on",
+            "code": [
+                "d1 $ s \"drum*4\" # n 0",
+                "d1 $ s \"drum*4\" # n \"0 1\"",
+                "d1 $ n \"0 1 2 3\" # s \"drum\""
+            ]
+        },
+        {
+            "index": 2,
+            "title": "gain",
+            "Author": "Tidalcycles Core",
+            "type": "Control Effect",
+            "description": "Manipulates a number pattern into a control pattern that specifies volume. Values less than 1 make the sound quieter. Values greater than 1 make the sound louder.",
+            "code": ["d1 $ s \"drum*4\" # n \"0 1 2 3\" # gain 1.25"]
+        }
+    ]
+}
